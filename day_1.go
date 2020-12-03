@@ -1,15 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"strconv"
 )
 
-func (d Day) Day1(s *bufio.Scanner) (p1 int, p2 int) {
+func (d Day) Day1(lines []string) (p1 int, p2 int) {
 	report := make([]int, 0)
 
-	for s.Scan() {
-		i, _ := strconv.Atoi(s.Text())
+	for _, l := range lines {
+		i, _ := strconv.Atoi(l)
 		report = append(report, i)
 	}
 

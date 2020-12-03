@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"sync"
@@ -27,13 +26,10 @@ func (t TobagganMap) LoadRow(idx int, r string) {
 	t[idx] = row
 }
 
-func (d Day) Day3(s *bufio.Scanner) (p1 int, p2 int) {
-	var c int
+func (d Day) Day3(lines []string) (p1 int, p2 int) {
 	tMap := make(TobagganMap)
-	for s.Scan() {
-		t := s.Text()
-		tMap.LoadRow(c, t)
-		c++ // hehehehheheehhehhehheheeheh
+	for i, l := range lines {
+		tMap.LoadRow(i, l)
 	}
 
 	var x = 0

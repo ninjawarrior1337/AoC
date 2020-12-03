@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"strconv"
 	"strings"
 )
@@ -41,11 +40,10 @@ func passwordDoesPassPt2(r Requirement, p string) bool {
 	return (isSlotOneValid || isSlowTwoValid) && !(isSlotOneValid && isSlowTwoValid)
 }
 
-func (d Day) Day2(s *bufio.Scanner) (p1 int, p2 int) {
-	for s.Scan() {
-		t := s.Text()
-		req := strings.Split(t, ": ")[0]
-		pass := strings.Split(t, ": ")[1]
+func (d Day) Day2(lines []string) (p1 int, p2 int) {
+	for _, l := range lines {
+		req := strings.Split(l, ": ")[0]
+		pass := strings.Split(l, ": ")[1]
 		passwords = append(passwords, pass)
 		requirements = append(requirements, parseRequirement(req))
 	}
