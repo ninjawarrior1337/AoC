@@ -32,6 +32,7 @@ func (d Day) Day3(lines []string) (p1 int, p2 int) {
 		tMap.LoadRow(i, l)
 	}
 
+	// Part 1
 	var x = 0
 	for y := 0; y < len(tMap); y++ {
 		log.Printf("checking row %v", y)
@@ -41,8 +42,10 @@ func (d Day) Day3(lines []string) (p1 int, p2 int) {
 		x += 3
 	}
 
+	// Part 2
 	p2 = 1
 	var p2Waiter sync.WaitGroup
+	var mutex = &sync.Mutex{}
 	var p2Offsets = [][]int{
 		{1, 1}, {3, 1}, {5, 1}, {7, 1}, {1, 2},
 	}
@@ -57,7 +60,9 @@ func (d Day) Day3(lines []string) (p1 int, p2 int) {
 				}
 				x += offset[0]
 			}
+			mutex.Lock()
 			p2 *= treeCounter
+			mutex.Unlock()
 			p2Waiter.Done()
 		}(offset)
 	}
