@@ -63,7 +63,7 @@ func (p Passport) IsValidP2() bool {
 }
 
 func (p Passport) AreYrsValid() bool {
-	if p["byr"] == "" && p["iyr"] == "" && p["eyr"] == "" {
+	if p["byr"] == "" || p["iyr"] == "" || p["eyr"] == "" {
 		return false
 	}
 	byr, _ := strconv.Atoi(p["byr"])
