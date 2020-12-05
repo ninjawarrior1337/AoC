@@ -11,7 +11,7 @@ import (
 type Passport map[string]string
 
 var passports = make([]Passport, 0)
-var reqFeilds = []string{"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"}
+var reqFields = []string{"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"}
 
 func ParsePassport(s string) {
 	var p Passport = make(Passport)
@@ -30,7 +30,7 @@ func ParsePassport(s string) {
 }
 
 func (p Passport) IsValidP1() bool {
-	for _, f := range reqFeilds {
+	for _, f := range reqFields {
 		if _, ok := p[f]; !ok {
 			return false
 		}
@@ -63,7 +63,7 @@ func (p Passport) IsValidP2() bool {
 }
 
 func (p Passport) AreYrsValid() bool {
-	if p["byr"] == "" && p["iyr"] == "" && p["eyr"] == "" {
+	if p["byr"] == "" || p["iyr"] == "" || p["eyr"] == "" {
 		return false
 	}
 	byr, _ := strconv.Atoi(p["byr"])
