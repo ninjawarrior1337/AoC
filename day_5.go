@@ -71,20 +71,18 @@ func (d Day) Day5(lines []string) (p1 int, p2 int) {
 		ParsePass(line)
 	}
 
-	//Part 1
-	for _, p := range seats {
-		if p.Id > p1 {
-			p1 = p.Id
-		}
-	}
-
-	//Part 2
+	//We'll need this for both parts.
 	ids := []int{}
 	for _, p := range seats {
 		ids = append(ids, p.Id)
 	}
 	sort.Ints(ids)
 	fmt.Println(ids)
+
+	//Part 1
+	p1 = ids[len(ids)-1]
+
+	//Part 2
 	for i := ids[0]; i <= ids[len(ids)-1]; i++ {
 		if contains(ids, i+1) && contains(ids, i-1) && !contains(ids, i) {
 			p2 = i
