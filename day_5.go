@@ -57,7 +57,7 @@ func ParsePass(line string) {
 	seats = append(seats, s)
 }
 
-func contains(s []int, e int) bool {
+func contains_int(s []int, e int) bool {
 	for _, a := range s {
 		if a == e {
 			return true
@@ -84,7 +84,7 @@ func (d Day) Day5(lines []string) (p1 int, p2 int) {
 
 	//Part 2
 	for i := ids[0]; i <= ids[len(ids)-1]; i++ {
-		if contains(ids, i+1) && contains(ids, i-1) && !contains(ids, i) {
+		if contains_int(ids, i+1) && contains_int(ids, i-1) && !contains_int(ids, i) {
 			p2 = i
 		}
 	}
