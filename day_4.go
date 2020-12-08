@@ -102,15 +102,9 @@ func (p Passport) IsIdValid() bool {
 	return rp.MatchString(p["pid"])
 }
 
-func (d Day) Day4(lines []string) (p1 int, p2 int) {
-	currLines := make([]string, 0)
-	for _, l := range lines {
-		if len(l) > 0 {
-			currLines = append(currLines, l)
-		} else if len(currLines) > 0 {
-			ParsePassport(strings.Join(currLines, " "))
-			currLines = []string{}
-		}
+func (d Day) Day4(i Input) (p1 int, p2 int) {
+	for _, g := range i.Groups() {
+		ParsePassport(strings.ReplaceAll(g, "\n", " "))
 	}
 	// Part 1
 	for _, p := range passports {

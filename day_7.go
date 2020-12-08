@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"sync"
-	"sync/atomic"
 )
 
 type LuggageStore map[string][]string
@@ -32,26 +30,20 @@ func (l LuggageStore) CanContainShinyBag(n string) bool {
 }
 
 func (l LuggageStore) CountInsideBag(n string) int {
-	var tempSum uint64
-	var wg sync.WaitGroup
+	var tempSum int
 	for _, bag := range l[n] {
-		wg.Add(1)
-		go func(bagData string) {
-			data := strings.Split(bagData, " ")
-			name := strings.Join(data[1:3], " ")
-			ct, _ := strconv.Atoi(data[0])
-			if name != "other" {
-				atomic.AddUint64(&tempSum, uint64(ct+ct*l.CountInsideBag(name)))
-			}
-			wg.Done()
-		}(bag)
+		data := strings.Split(bag, " ")
+		name := strings.Join(data[1:3], " ")
+		ct, _ := strconv.Atoi(data[0])
+		if name != "other" {
+			tempSum += ct + ct*l.CountInsideBag(name)
+		}
 	}
-	wg.Wait()
 	return int(tempSum)
 }
 
-func (d Day) Day7(lines []string) (p1, p2 int) {
-	for _, line := range lines {
+func (d Day) Day7(i Input) (p1, p2 int) {
+	for _, line := range i.Lines() {
 		data := strings.Split(line, " bags contain ")
 		store[data[0]] = strings.Split(data[1], ", ")
 	}

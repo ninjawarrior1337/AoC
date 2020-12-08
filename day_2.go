@@ -40,8 +40,8 @@ func passwordDoesPassPt2(r Requirement, p string) bool {
 	return (isSlotOneValid || isSlowTwoValid) && !(isSlotOneValid && isSlowTwoValid)
 }
 
-func (d Day) Day2(lines []string) (p1 int, p2 int) {
-	for _, l := range lines {
+func (d Day) Day2(i Input) (p1 int, p2 int) {
+	for _, l := range i.Lines() {
 		req := strings.Split(l, ": ")[0]
 		pass := strings.Split(l, ": ")[1]
 		passwords = append(passwords, pass)

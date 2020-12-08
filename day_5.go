@@ -66,8 +66,8 @@ func contains_int(s []int, e int) bool {
 	return false
 }
 
-func (d Day) Day5(lines []string) (p1 int, p2 int) {
-	for _, line := range lines {
+func (d Day) Day5(i Input) (p1 int, p2 int) {
+	for _, line := range i.Lines() {
 		ParsePass(line)
 	}
 

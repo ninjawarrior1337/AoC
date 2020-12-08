@@ -46,16 +46,10 @@ func ParseQuestionareP2(s []string) {
 	questionsEveryoneAnswered += qea
 }
 
-func (d Day) Day6(lines []string) (p1 int, p2 int) {
-	currLines := make([]string, 0)
-	for _, l := range lines {
-		if len(l) > 0 {
-			currLines = append(currLines, l)
-		} else if len(currLines) > 0 {
-			ParseQuestionareP1(strings.Join(currLines, ""))
-			ParseQuestionareP2(currLines)
-			currLines = []string{}
-		}
+func (d Day) Day6(i Input) (p1 int, p2 int) {
+	for _, g := range i.Groups() {
+		ParseQuestionareP1(g)
+		ParseQuestionareP2(strings.Split(g, "\n"))
 	}
 
 	p1 = questionsAnswered

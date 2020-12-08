@@ -26,15 +26,14 @@ func (t TobagganMap) LoadRow(idx int, r string) {
 	t[idx] = row
 }
 
-func (d Day) Day3(lines []string) (p1 int, p2 int) {
+func (d Day) Day3(i Input) (p1 int, p2 int) {
 	tMap := make(TobagganMap)
-	for i, l := range lines {
+	for i, l := range i.Lines() {
 		tMap.LoadRow(i, l)
 	}
 
 	// Part 1
-	var x = 0
-	for y := 0; y < len(tMap); y++ {
+	for x, y := 0, 0; y < len(tMap); y++ {
 		log.Printf("checking row %v", y)
 		if tMap.IsTreeAtCoord(x, y) {
 			p1++
@@ -53,8 +52,7 @@ func (d Day) Day3(lines []string) (p1 int, p2 int) {
 		p2Waiter.Add(1)
 		go func(offset []int) {
 			var treeCounter = 0
-			var x = 0
-			for y := 0; y < len(tMap); y += offset[1] {
+			for x, y := 0, 0; y < len(tMap); y += offset[1] {
 				if tMap.IsTreeAtCoord(x, y) {
 					treeCounter++
 				}

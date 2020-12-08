@@ -4,10 +4,10 @@ import (
 	"strconv"
 )
 
-func (d Day) Day1(lines []string) (p1 int, p2 int) {
+func (d Day) Day1(i Input) (p1 int, p2 int) {
 	report := make([]int, 0)
 
-	for _, l := range lines {
+	for _, l := range i.Lines() {
 		i, _ := strconv.Atoi(l)
 		report = append(report, i)
 	}
