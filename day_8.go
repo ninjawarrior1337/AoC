@@ -1,10 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type OpCode string
@@ -47,13 +47,13 @@ func (p Program) Run() (ret int) {
 	return
 }
 
-func (p Program) RunWithLoopDetection() (ret int) {
+func (p Program) RunWithLoopDetection() (ret int, err error) {
 	var accumVar int
 	var seenIdx = make([]int, 0)
 	for i := 0; i < len(p); i++ {
 		ins := p[i]
 		if contains_int(seenIdx, i) {
-			return accumVar
+			return accumVar, errors.New("program never halts")
 		} else {
 			seenIdx = append(seenIdx, i)
 		}
@@ -99,7 +99,7 @@ func (d Day) Day8(i Input) (p1, p2 int) {
 	}
 
 	//Part 1
-	p1 = program.RunWithLoopDetection()
+	p1, _ = program.RunWithLoopDetection()
 
 	// Get ready for some brute forcing
 	var foundChan = make(chan int)
@@ -107,15 +107,10 @@ func (d Day) Day8(i Input) (p1, p2 int) {
 	for _, i := range program.FindJmpOrNop() {
 		go func(replaceIdx int) {
 			var tempProgram Program
-			var retChan = make(chan int)
 			tempProgram = append(tempProgram, program[:]...)
 			tempProgram.FlipOp(replaceIdx)
-			go func() {
-				retChan <- tempProgram.Run()
-			}()
-			select {
-			case <-time.After(1 * time.Second):
-			case ret := <-retChan:
+			ret, err := tempProgram.RunWithLoopDetection()
+			if err == nil {
 				foundChan <- ret
 			}
 		}(i)
