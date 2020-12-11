@@ -41,5 +41,5 @@ func main() {
 		reflect.ValueOf(i),
 	})
 	fmt.Printf("Part 1 Answer: %v\nPart 2 Answer %v\n", values[0], values[1])
-	fmt.Printf("This calculation took: %vμs\n", time.Since(st).Microseconds())
+	fmt.Printf("This calculation took: %vμs/%vms/%vs\n", time.Since(st).Microseconds(), time.Since(st).Milliseconds(), time.Since(st).Seconds())
 }
