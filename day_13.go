@@ -5,7 +5,7 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/cheggaaa/pb/v3"
+	"github.com/cheggaaa/pb"
 )
 
 func (d Day) Day13(i Input) (p1, p2 int) {
@@ -65,7 +65,7 @@ func Day13_P2_Dyn(busses []string) chan int {
 
 func Day13_P2_Fixed() chan int {
 	var steps = 557
-	bar := pb.StartNew(41 * 37 * 379 * 23 * 13 * 17 * 29 * 557 * 19)
+	bar := pb.New(41 * 37 * 379 * 23 * 13 * 17 * 29 * 19)
 	solutionChan := make(chan int)
 	timeChan := make(chan int, 100000)
 	worker := func(timeChan chan int) {
@@ -88,11 +88,12 @@ func Day13_P2_Fixed() chan int {
 		go worker(timeChan)
 	}
 	go func() {
-		for i := steps; ; i += steps {
+		for i := steps - 41; ; i += steps {
 			timeChan <- i
 			// bar.Finish()
 		}
 	}()
+	bar.Start()
 	return solutionChan
 }
 
