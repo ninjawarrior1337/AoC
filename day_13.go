@@ -70,7 +70,6 @@ func Day13_P2_Fixed() chan int {
 	timeChan := make(chan int, 100000)
 	worker := func(timeChan chan int) {
 		for time := range timeChan {
-			bar.Increment()
 			if time%41 == 0 &&
 				(time+35)%37 == 0 &&
 				(time+41)%379 == 0 &&
@@ -88,9 +87,9 @@ func Day13_P2_Fixed() chan int {
 		go worker(timeChan)
 	}
 	go func() {
-		for i := steps - 41; ; i += steps {
+		for i := steps - 72; ; i += steps {
+			bar.Increment()
 			timeChan <- i
-			// bar.Finish()
 		}
 	}()
 	bar.Start()
