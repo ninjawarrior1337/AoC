@@ -67,9 +67,28 @@ func Day13_P2_Fixed() chan int {
 	var steps = 557
 	bar := pb.New(41 * 37 * 379 * 23 * 13 * 17 * 29 * 19)
 	solutionChan := make(chan int)
-	timeChan := make(chan int, 100000)
-	worker := func(timeChan chan int) {
-		for time := range timeChan {
+	// timeChan := make(chan int, 100000)
+	// worker := func(timeChan chan int) {
+	// 	for time := range timeChan {
+	// 		if time%41 == 0 &&
+	// 			(time+35)%37 == 0 &&
+	// 			(time+41)%379 == 0 &&
+	// 			(time+49)%23 == 0 &&
+	// 			(time+54)%13 == 0 &&
+	// 			(time+58)%17 == 0 &&
+	// 			(time+70)%29 == 0 &&
+	// 			(time+72)%557 == 0 &&
+	// 			(time+91)%19 == 0 {
+	// 			solutionChan <- time
+	// 		}
+	// 	}
+	// }
+	// for i := 0; i < 6; i++ {
+	// 	go worker(timeChan)
+	// }
+	go func() {
+		for time := steps - 72; ; time += steps {
+			bar.Increment()
 			if time%41 == 0 &&
 				(time+35)%37 == 0 &&
 				(time+41)%379 == 0 &&
@@ -81,15 +100,7 @@ func Day13_P2_Fixed() chan int {
 				(time+91)%19 == 0 {
 				solutionChan <- time
 			}
-		}
-	}
-	for i := 0; i < 100; i++ {
-		go worker(timeChan)
-	}
-	go func() {
-		for i := steps - 72; ; i += steps {
-			bar.Increment()
-			timeChan <- i
+			// timeChan <- i
 		}
 	}()
 	bar.Start()
