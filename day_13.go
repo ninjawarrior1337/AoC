@@ -42,6 +42,7 @@ func Day13_P2_Dyn(busses []string) chan int {
 	worker := func(timeChan chan int) {
 		for time := range timeChan {
 			if time < 0 {
+				// This is supposed to catch overflows if it ever gets to that point
 				fmt.Println("what the fuck just happened", time)
 			}
 			// fmt.Println("checking timestamp", time)
