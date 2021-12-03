@@ -2,10 +2,7 @@ require "benchmark"
 
 module AOC
     class AocDay
-        attr_reader :p1
-        attr_reader :p2 
-        @p1 = "TODO: Compute"
-        @p2 = "TODO: Compute"
+        attr_reader :p1, :p2
 
         FORMAT = "%n #{Benchmark::FORMAT}"
 
@@ -22,14 +19,19 @@ module AOC
             puts p2time.format(FORMAT)
         end
 
-        def part1() end
-        def part2() end
+        def part1()
+            @p1 = "TODO: Compute"
+        end
+
+        def part2() 
+            @p2 = "TODO: Compute"
+        end
     end
 end
 
 Dir["./days/*.rb"].each{|f| require f}
 
-lines = File.readlines("inputs/d#{ARGV[0]}.txt")
+lines = File.readlines("inputs/d#{ARGV[0]}.txt").map(&:strip)
 day = "AOC::Day#{ARGV[0]}".split('::').inject(Object) {|o,c| o.const_get c}.new lines
 
 day.run
