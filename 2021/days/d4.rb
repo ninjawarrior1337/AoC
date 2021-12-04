@@ -19,23 +19,7 @@ module AOC
             @nums = @lines[0].split(",").map(&:to_i)
             @boards = @lines[2...].select {|l| l != ""}.each_slice(5).map{parseBoard(_1)}
             
-            seen = []
-            @p1 = catch(:sol) do
-                @nums.each{|n|
-                    seen << n
-
-                    @boards.each{|b|
-                        (0...5).each{|r|
-                            throw :sol, sum_missing(b, seen)*n if (b.column(r).to_a-seen).length == 0
-                            throw :sol, sum_missing(b, seen)*n if (b.row(r).to_a-seen).length == 0
-                        }
-                    }
-                }
-            end
-        end
-
-        def part2
-            turnsToWin = @boards.map{|b|
+            @turnsToWin = Parallel.map(@boards){|b|
                 seen = []
                 catch(:stop) do
                     @nums.each{|n|
@@ -48,7 +32,12 @@ module AOC
                 end
                 [sum_missing(b, seen)*seen.last, seen.length]
             }
-            @p2 = turnsToWin.detect{|t| t.include?(turnsToWin.map{_1[1]}.max)}[0]
+
+            @p1 = @turnsToWin.detect{|t| t.include?(@turnsToWin.map{_1[1]}.min)}[0]
+        end
+
+        def part2
+            @p2 = @turnsToWin.detect{|t| t.include?(@turnsToWin.map{_1[1]}.max)}[0]
         end
     end
 end
