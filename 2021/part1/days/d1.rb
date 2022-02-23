@@ -3,7 +3,7 @@ require "parallel"
 module AOC
     class Day1 < AocDay
         def countConsecutiveIncreases(e)
-            e.each_with_index.map { |m, i| 
+            Parallel.map(e.each_with_index) { |m, i| 
                 0 if i == 0
                 m > e.map(&:to_i)[i-1] ? 1 : 0
             }.reduce(&:+)
