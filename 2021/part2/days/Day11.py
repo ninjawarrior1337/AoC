@@ -37,7 +37,6 @@ class Day11(AoCDay):
         
         if len(flashes) == self.grid.size:
             self.all_flash_step = step_num+1
-        
 
     def part1(self):
         print(self.grid)
