@@ -5,7 +5,13 @@ from utils import AoCDay
 
 def run(num: str):
     with open(f"input/d{num}.txt") as f:
-        day: AoCDay = getattr(days, f"Day{num}")(f.read())
+        dayClass: AoCDay.__class__
+        try:
+            dayClass = getattr(days, f"Day{num}")
+        except:
+            return print(f"Day {num} not found")
+
+        day: AoCDay = dayClass(f.read())
 
         day.part1()
         print(f"Part 1: {day.p1}")
@@ -15,7 +21,8 @@ def run(num: str):
 
 try:
     dayNumber = sys.argv[1]
-    run(dayNumber)
 except:
     print("Please write the number day you wish to run")
+
+run(dayNumber)
     

@@ -6,8 +6,8 @@ class AoCDay(ABC):
     p2: Any = None
     lines: list[str]
 
-    def __init__(self, lines: str) -> None:
-        self.lines = lines.splitlines()
+    def __init__(self, linesRaw: str) -> None:
+        self.lines = linesRaw.splitlines()
 
     def part1(self):
         print("TODO: Solve part 1")
