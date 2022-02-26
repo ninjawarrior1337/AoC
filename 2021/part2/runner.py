@@ -4,6 +4,7 @@ from timeit import timeit
 from utils import AoCDay
 
 def run(num: str):
+    day: AoCDay
     try:
         with open(f"input/d{num}.txt") as f:
             dayClass: AoCDay.__class__
@@ -12,15 +13,15 @@ def run(num: str):
             except:
                 return print(f"Day {num} not found")
 
-            day: AoCDay = dayClass(f.read())
-
-            day.part1()
-            print(f"Part 1: {day.p1}")
-
-            day.part2()
-            print(f"Part 2: {day.p2}")
-    except:
+            day = dayClass(f.read())            
+    except FileNotFoundError:
         return print(f"Day {num} not found in days folder")
+
+    day.part1()
+    print(f"Part 1: {day.p1}")
+
+    day.part2()
+    print(f"Part 2: {day.p2}")
 
 try:
     dayNumber = sys.argv[1]
