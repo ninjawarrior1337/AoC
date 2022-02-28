@@ -49,3 +49,4 @@ class Day13(AoCDay):
             self.fold(*f)
         im = Image.fromarray(np.uint8(self.grid)*255)
         im.save("d13.png")
+        self.p2 = "Refer to d13.png"
