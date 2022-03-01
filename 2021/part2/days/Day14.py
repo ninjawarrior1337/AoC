@@ -11,7 +11,8 @@ class Day14(AoCDay):
     def __init__(self, linesRaw: str) -> None:
         super().__init__(linesRaw)
         self.base = [c for c in self.lines[0]]
-        self.counts = defaultdict(Counter(self.base))
+        self.counts = defaultdict(int)
+        self.counts.update(dict(Counter(self.base)))
         self.insertions = {r.split(" -> ")[0]: r.split(" -> ")[1] for r in self.lines[2:] }
         self.pairs = defaultdict(int)
         self.compute_pairs()
@@ -21,7 +22,6 @@ class Day14(AoCDay):
             left, right = self.base[i-1], self.base[i]
             self.pairs[(left, right)] += 1
 
-
     def apply_insertions(self):
         for p, v in list(self.pairs.items()):
             for tmpl, val in self.insertions.items():
@@ -30,18 +30,16 @@ class Day14(AoCDay):
                     self.pairs[(left, val)] += 1 * v
                     self.pairs[(val, right)] += 1 * v
                     self.pairs[(left, right)] -= 1 * v
-                    self.counts[val] += 1
+                    self.counts[val] += 1 * v
 
     def part1(self):
-        print(self.pairs)
-        print(self.insertions)
-        for i in range(5):
+        for i in range(10):
             self.apply_insertions()
-        print(self.counts)
-        print(self.pairs)
-        print(sum(self.pairs.values()))
+        S = sorted(self.counts.items(), key=lambda x: x[1])
+        self.p1 = S[-1][1] - S[0][1]
 
     def part2(self):
-        pass
-        
-        
+        for i in range(30):
+            self.apply_insertions()
+        S = sorted(self.counts.items(), key=lambda x: x[1])
+        self.p2 = S[-1][1] - S[0][1]
