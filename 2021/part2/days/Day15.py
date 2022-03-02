@@ -1,6 +1,7 @@
 from collections import defaultdict
 import numpy as np
 from utils import AoCDay
+from queue import PriorityQueue
 
 class Day15(AoCDay):
     grid: np.ndarray
@@ -32,35 +33,59 @@ class Day15(AoCDay):
                 for n in self.neighbors(pos):
                     self.graph[pos].append((n, self.grid[n]))
     
-    def dijkstra(self, src = (0,0)):
-        Q: set[tuple[int, int]] = set()
+    def dijkstra(self, src = (0,0), dest = (10, 10)):
+        Q: PriorityQueue[tuple[int, tuple[int, int]]] = PriorityQueue()
         dist = {}
         prev = {}
-        for v in self.graph.keys():
-            dist[v] = float("inf")
-            prev[v] = None
-            Q.add(v)
+
         dist[src] = 0
+        Q.put((dist[src], src))
+        
+        for v in self.graph.keys():
+            if v != src:
+                dist[v] = float("inf")
+                prev[v] = None
+        
+        while Q.not_empty:
+            _, u = Q.get()
 
-        print(Q)
-
-        while Q:
-            u = min(Q, key=lambda v: dist[v])
-            print(u)
             for n in self.graph[u]:
-                if n[0] in Q:
-                    alt = dist[u] + n[1]
-                    print(dist[n[0]], alt, alt < dist[n[0]])
-                    if alt < dist[n[0]]:
-                        dist[n] = alt
-                        prev[n] = u
-                        print(dist[n])
-            Q.remove(u)
-            print(len(Q))
+                alt = dist[u] + n[1]
+
+                if alt < dist[n[0]]:
+                    dist[n[0]] = alt
+                    if dest and n[0] == dest:
+                        return dist, prev
+                    prev[n[0]] = u
+                    Q.put((alt, n[0]))
+
         return dist, prev
 
+    def larger_grid(self):
+        stack = [self.grid[:]]
+        for i in range(1, 5):
+            g = stack[i-1]
+            stack.append(np.where(g+1 >= 10, 1, g+1))
+
+        self.grid = np.hstack(stack)
+
+        stack = [self.grid[:]]
+        for i in range(1, 5):
+            g = stack[i-1]
+            stack.append(np.where(g+1 >= 10, 1, g+1))
+
+        self.grid = np.vstack(stack)
+
+    def shape_idx(self):
+        return (self.grid.shape[0]-1, self.grid.shape[1]-1)
+
     def part1(self):
-        print(self.grid)
         self.construct_graph()
-        print(self.graph)
-        print(self.dijkstra())
+        dist, _ = self.dijkstra(dest=self.shape_idx())
+        self.p1 = dist[tuple([d-1 for d in self.grid.shape])]
+
+    def part2(self):
+        self.larger_grid()
+        self.construct_graph()
+        dist, _ = self.dijkstra(dest=self.shape_idx())
+        self.p2 = dist[tuple([d-1 for d in self.grid.shape])]
