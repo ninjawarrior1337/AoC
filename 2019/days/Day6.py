@@ -3,7 +3,7 @@ from collections import defaultdict
 import networkx as nx
 
 
-class Day5(AoCDay):
+class Day6(AoCDay):
     adj_list: defaultdict[str, list[str]] = defaultdict(lambda: [])
 
     def construct_graph(self):
