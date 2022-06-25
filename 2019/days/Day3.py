@@ -3,8 +3,10 @@ from utils import AoCDay
 
 class Day3(AoCDay):
     wire_1, wire_2 = [], []
+    crosses = None
 
-    def parse_wire(self, w: str):
+    @staticmethod
+    def parse_wire(w: str):
         positions = []
         current_pos = [0, 0]
 
@@ -27,13 +29,8 @@ class Day3(AoCDay):
         self.wire_1 = self.parse_wire(self.lines[0])
         self.wire_2 = self.parse_wire(self.lines[1])
 
-        crosses = set(self.wire_1) & set(self.wire_2)
-        self.p1 = min(abs(p[0]) + abs(p[1]) for p in crosses)
+        self.crosses = set(self.wire_1) & set(self.wire_2)
+        self.p1 = min(abs(p[0]) + abs(p[1]) for p in self.crosses)
 
     def part2(self):
-        self.wire_1 = self.parse_wire(self.lines[0])
-        self.wire_2 = self.parse_wire(self.lines[1])
-
-        crosses = set(self.wire_1) & set(self.wire_2)
-
-        self.p2 = min(sum((self.wire_1.index(c)+1, self.wire_2.index(c)+1)) for c in crosses)
+        self.p2 = min(sum((self.wire_1.index(c)+1, self.wire_2.index(c)+1)) for c in self.crosses)
