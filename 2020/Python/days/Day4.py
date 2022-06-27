@@ -1,6 +1,7 @@
 from utils import AoCDay
 from typing import Optional
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, validator, ValidationError
+from itertools import islice
 import re
 
 
@@ -17,38 +18,39 @@ class Passport(BaseModel):
     @validator("byr")
     def byr_check(cls, v):
         if not 1920 <= v <= 2002:
-            raise ValidationError("dates out of range")
+            raise ValueError("dates out of range")
         return v
 
     @validator("iyr")
     def iyr_check(cls, v):
         if not 2010 <= v <= 2020:
-            raise ValidationError("dates out of range")
+            raise ValueError("dates out of range")
         return v
 
     @validator("eyr")
     def eyr_check(cls, v):
         if not 2020 <= v <= 2030:
-            raise ValidationError("dates out of range")
+            raise ValueError("dates out of range")
         return v
 
     @validator("hgt")
     def hgt_check(cls, v):
         i = int(v[:-2])
         if "cm" in v:
-            if 150 <= i <= 193:
-                raise ValidationError("height unrealistic")
-        if "in" in v:
-            if 59 <= i <= 76:
-                raise ValidationError("height unrealistic")
+            if not 150 <= i <= 193:
+                raise ValueError("height unrealistic")
+        elif "in" in v:
+            if not 59 <= i <= 76:
+                raise ValueError("height unrealistic")
+        else:
+            raise ValueError("lack of units")
         return v
 
     @validator("hcl")
     def hcl_check(cls, v):
-        e = ValidationError("invalid hex string")
         match = re.search(r'^#(?:[\da-fA-F]{3}){1,2}$', v)
         if not match:
-            raise e
+            raise ValueError("invalid hex string")
         return v
 
     @validator("ecl")
@@ -57,12 +59,12 @@ class Passport(BaseModel):
         if v in valid.split(" "):
             return v
         else:
-            raise ValidationError("invalid ecl")
+            raise ValueError("invalid ecl")
 
     @validator("pid")
     def pid_check(cls, v):
         if not re.search(r"^[0-9]{9}$", v):
-            raise ValidationError("invalid pid")
+            raise ValueError("invalid pid")
         return v
 
 
@@ -98,7 +100,9 @@ class Day4(AoCDay):
 
     def part2(self):
         self.p2 = 0
-        for d in self.extract():
-            print(d)
-            Passport(**d)
-            self.p2 += 1
+        for p in self.extract():
+            try:
+                Passport(**p)
+                self.p2 += 1
+            except ValidationError as e:
+                pass
