@@ -1,18 +1,7 @@
 from utils import AoCDay
-
+from itertools import groupby
 class Day1(AoCDay):
     def part1(self):
-        totals = []
-        self.lines.append("")
-        t = 0
-        for v in self.lines:
-            if v != "":
-                i = int(v)
-                t += i
-            else:
-                totals.append(t)
-                t = 0
-        print(totals)
+        totals = [sum([int(v) for v in a]) for k, a in groupby(self.lines, lambda l: l != "") if k]
         self.p1 = max(totals)
-
         self.p2 = sum(sorted(totals, reverse=True)[:3])
