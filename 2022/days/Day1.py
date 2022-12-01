@@ -15,8 +15,4 @@ class Day1(AoCDay):
         print(totals)
         self.p1 = max(totals)
 
-        self.p2 = 0
-        for i in range(3):
-            self.p1 = max(totals)
-            self.p2 += self.p1
-            totals.remove(self.p1)
+        self.p2 = sum(sorted(totals, reverse=True)[:3])
