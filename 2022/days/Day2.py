@@ -49,9 +49,7 @@ class Day2(AoCDay):
         return sc
             
     def part1(self):
-        tot = [self.score1(l) for l in self.lines]
+        tot = [(self.score1(l), self.score2(l)) for l in self.lines]
         print(tot)
-        self.p1 = sum(tot)
-
-        tot = [self.score2(l) for l in self.lines]
-        self.p2 = sum(tot)
+        self.p1 = sum([v[0] for v in tot])
+        self.p2 = sum([v[1] for v in tot])
