@@ -33,18 +33,13 @@ class Day2(AoCDay):
         o, y = (rps[x] for x in s.split(" "))
 
         if y == 0:
-            pass
+            sc = {y: x for x, y in win.items()}[o]+1 # | || || |_
         elif y == 1:
             sc += 3
+            sc += o+1 # 👔
         else:
             sc += 6
-        
-        if sc == 6:
-            sc += win[o]+1
-        elif sc == 3:
-            sc += o+1
-        else:
-            sc = {y: x for x, y in win.items()}[o]+1
+            sc += win[o]+1 # fat w
 
         return sc
             
