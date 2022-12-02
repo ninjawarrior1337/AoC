@@ -1,53 +1,28 @@
 from utils import AoCDay
-from itertools import groupby
 
-m = {
-    "X": 1,
-    "Y": 2,
-    "Z": 3,
-}
-
-ma = {
-    "A": 1,
-    "B": 2,
-    "C": 3
-}
-
-tie = {
-    "A": "X",
-    "B": "Y",
-    "C": "Z"
+rps = {
+    "X": 0,
+    "Y": 1,
+    "Z": 2,
+    "A": 0,
+    "B": 1,
+    "C": 2
 }
 
 win = {
-    "X": "C",
-    "Y": "A",
-    "Z": "B"
-}
-
-win_o = {
-    "A": "Y",
-    "B": "Z",
-    "C": "X"
-}
-
-lose = {
-    "A": "Z",
-    "B": "X",
-    "C": "Y"
+    2: 0,
+    1: 2,
+    0: 1
 }
 
 class Day2(AoCDay):
     def score1(self, s: str):
         sc = 0
-
-        o, y = s.split(" ")
-
-        sc += m[y]
-
-        if win[y] == o:
+        o, y = (rps[x] for x in s.split(" "))
+        sc += y+1
+        if win[o] == y:
             sc += 6
-        elif tie[o] == y:
+        elif y == o:
             sc += 3
         else:
             pass
@@ -55,22 +30,21 @@ class Day2(AoCDay):
 
     def score2(self, s: str):
         sc = 0
-        o, y = s.split(" ")
+        o, y = (rps[x] for x in s.split(" "))
 
-        dr = {
-            "X": 0,
-            "Y": 3,
-            "Z": 6
-        }
-
-        sc += dr[y]
-        
-        if sc == 0:
-            sc += m[lose[o]]
-        elif sc == 3:
-            sc += m[tie[o]]
+        if y == 0:
+            pass
+        elif y == 1:
+            sc += 3
         else:
-            sc += m[win_o[o]]
+            sc += 6
+        
+        if sc == 6:
+            sc += win[o]+1
+        elif sc == 3:
+            sc += o+1
+        else:
+            sc = {y: x for x, y in win.items()}[o]+1
 
         return sc
             
