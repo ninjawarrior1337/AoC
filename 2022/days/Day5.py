@@ -3,15 +3,12 @@ from itertools import groupby
 from parse import parse
 from collections import defaultdict
 from queue import LifoQueue
+from copy import deepcopy
 
 class Day5(AoCDay):
-    def part1(self):
+
+    def build_stacks(self, iils: str) -> defaultdict[str, LifoQueue[str]]:
         stacks: defaultdict[str, LifoQueue[str]] = defaultdict(LifoQueue)
-        initial, moves = self.raw.split("\n\n")
-
-        print(initial)
-
-        iils = initial.splitlines()
 
         for c, v in enumerate(iils[-1]):
             if v != " ":
@@ -19,19 +16,37 @@ class Day5(AoCDay):
                     cha = iils[r][c]
                     if cha != " ":
                         stacks[v].put(iils[r][c])
-                        # print(iils[r][c])
+        return stacks
 
+
+
+    def part1(self):
+        initial, moves = self.raw.split("\n\n")
+        iils = initial.splitlines()
+
+        stacks = self.build_stacks(iils)
+        stacks_p2 = self.build_stacks(iils)
+        
         for m in moves.split("\n"):
             ct, src, dest = parse("move {:d} from {:d} to {:d}", m).fixed
-            # print(ct, src, dest)
 
             popped = []
+
             for _ in range(ct):
-                popped.append(stacks[str(src)].get())
-            for e in reversed(popped):
+                e = stacks[str(src)].get()
                 stacks[str(dest)].put(e)
+
+                popped.append(stacks_p2[str(src)].get())
+
+            for e in reversed(popped):
+                stacks_p2[str(dest)].put(e)
 
         self.p1 = ""
 
         for i in range(1, 10):
             self.p1 += (stacks[str(i)].get())
+
+        self.p2 = ""
+
+        for i in range(1, 10):
+            self.p2 += (stacks_p2[str(i)].get())
