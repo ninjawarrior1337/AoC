@@ -20,19 +20,13 @@ class Day7(AoCDay):
             elif l.startswith("dir"):
                 _, cd = l.split()
                 dirs.add(tuple([*curr_dir, cd]))
-
-        
-        print(f_size)
-        print()
-        print(dirs)
         
         dir_sizes: defaultdict[tuple, int] = defaultdict(lambda: 0)
         for d in dirs:
             for f_loc, size in f_size.items():
                 if all(f_loc[i] == d[i] for i in range(len(d))):
                     dir_sizes[d] += size
-        print(dir_sizes)
-        
+                            
         self.p1 = sum(s for s in dir_sizes.values() if s <= 100000)
 
         fs_target = 70000000-30000000
