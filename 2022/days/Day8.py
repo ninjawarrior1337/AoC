@@ -9,8 +9,6 @@ class Day8(AoCDay):
             grid.append([(int(c), False) for c in line.strip()])
 
         # Count the number of visible trees
-        for r in grid:
-            print(r)
 
         num_visible = 0
 
@@ -47,7 +45,7 @@ class Day8(AoCDay):
                     grid[r][c] = (grid[r][c][0], True)
 
         # Print the result
-        print(num_visible)
+        self.p1 = num_visible
         # for r in grid:
         #     print(r)
 
@@ -92,4 +90,4 @@ class Day8(AoCDay):
                 max_score = max(max_score, score)
 
         # Print the result
-        print(max_score)
+        self.p2 = max_score
