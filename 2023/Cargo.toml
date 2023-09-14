@@ -1,0 +1,16 @@
+[package]
+name = "aoc2023"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+members = ["aoc_macros"]
+
+[dependencies]
+anyhow = "1.0.75"
+aoc_macros = { path = "./aoc_macros" }
+lazy_static = "1.4.0"
+ndarray = "0.15.6"
+nom = "7.1.3"
