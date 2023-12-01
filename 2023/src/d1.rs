@@ -1,8 +1,8 @@
-use std::collections::HashMap;
+
 
 use aoc_macros::AoCSetup;
-use lazy_static::lazy_static;
-use tracing::{debug, info, Level};
+
+use tracing::{info, Level};
 
 use crate::AoCDay;
 
