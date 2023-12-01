@@ -1,8 +1,8 @@
 extern crate proc_macro;
-use proc_macro::{TokenStream};
+use proc_macro::TokenStream;
 
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Attribute, DataStruct};
+use syn::{parse_macro_input, Attribute, DataStruct, DeriveInput};
 
 #[proc_macro_derive(AoCSetup)]
 pub fn aoc_day(item: TokenStream) -> TokenStream {
@@ -17,12 +17,13 @@ pub fn aoc_day(item: TokenStream) -> TokenStream {
             fn new() -> Box<Self> {
                 Box::new(#ident::default())
             }
-        
+
             #[inline]
             fn input(&self) -> &'static str {
                 include_str!(#fpath)
             }
         }
-        
-    }.into()
+
+    }
+    .into()
 }
