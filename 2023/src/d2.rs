@@ -1,5 +1,6 @@
 use aoc_macros::AoCSetup;
 use nom::bytes::complete::tag;
+use rayon::{str::ParallelString, iter::ParallelIterator};
 use tracing::{debug, info, Level};
 
 use crate::AoCDay;
@@ -19,23 +20,14 @@ struct Game {
 impl Game {
     #[tracing::instrument(level = Level::DEBUG, ret)]
     fn max_pulls(&self) -> (u32, u32, u32) {
-        self.pulls.iter().fold((0, 0, 0), |mut b, p| {
-            if p.red > b.0 {
-                b.0 = p.red;
-            }
-
-            if p.green >= b.1 {
-                b.1 = p.green;
-            }
-
-            if p.blue >= b.2 {
-                b.2 = p.blue;
-            }
-
-            b
-        })
+        (
+            self.pulls.iter().max_by_key(|x| x.red).unwrap().red,
+            self.pulls.iter().max_by_key(|x| x.green).unwrap().green,
+            self.pulls.iter().max_by_key(|x| x.blue).unwrap().blue
+        )
     }
 
+    #[tracing::instrument(level = Level::DEBUG, ret)]
     fn parse(s: &str) -> Game {
         // Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 
@@ -75,14 +67,18 @@ pub struct D2 {}
 const LIMITS: (u32, u32, u32) = (12, 13, 14);
 
 impl AoCDay for D2 {
-
     #[tracing::instrument]
     fn part1(&mut self) {
         let input = self.input();
-        let g = input.lines().map(|l| Game::parse(l)).filter(|g| {
-            let c = g.max_pulls();
-            c.0 <= LIMITS.0 && c.1 <= LIMITS.1 && c.2 <= LIMITS.2
-        }).fold(0, |acc, g| acc + g.num);
+        let g: u32 = input
+            .par_lines()
+            .map(|l| Game::parse(l))
+            .filter(|g| {
+                let c = g.max_pulls();
+                c.0 <= LIMITS.0 && c.1 <= LIMITS.1 && c.2 <= LIMITS.2
+            })
+            .fold(|| 0, |acc, g| acc + g.num)
+            .sum();
 
         info!(?g);
     }
@@ -90,10 +86,14 @@ impl AoCDay for D2 {
     #[tracing::instrument]
     fn part2(&mut self) {
         let input = self.input();
-        let g = input.lines().map(|l| Game::parse(l)).map(|g| {
-            let c = g.max_pulls();
-            c.0 * c.1 * c.2
-        }).fold(0, |acc, g| acc + g);
+        let g: u32 = input
+            .par_lines()
+            .map(|l| Game::parse(l))
+            .map(|g| {
+                let c = g.max_pulls();
+                c.0 * c.1 * c.2
+            })
+            .sum();
 
         info!(?g);
     }

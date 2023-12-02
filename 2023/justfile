@@ -13,5 +13,8 @@ debug-all:
 build:
     cargo build --release
 
-bench:
+bench day:
+    cargo bench {{day}}
+
+bench-all:
     cargo bench
