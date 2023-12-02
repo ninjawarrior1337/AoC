@@ -2,6 +2,7 @@
 mod macros;
 
 pub mod d1;
+pub mod d2;
 
 pub trait AoCSetup {
     fn new() -> Box<Self>;

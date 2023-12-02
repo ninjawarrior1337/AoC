@@ -1,11 +1,17 @@
-run:
+run day:
+    cargo run -- --day {{day}}
+
+run-all:
     cargo run
+
+debug day:
+    RUST_LOG=debug cargo run -- --day {{day}}
+
+debug-all:
+    RUST_LOG=debug cargo run
 
 build:
     cargo build --release
-
-debug:
-    RUST_LOG=debug cargo run
 
 bench:
     cargo bench
