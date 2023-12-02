@@ -24,11 +24,8 @@ fn main() -> Result<()> {
         day.part1();
         day.part2();
     } else {
-        for (i, d) in (&mut days).iter_mut().enumerate() {
-            println!("Day {}", i + 1);
-            println!("P1");
+        for (_, d) in (&mut days).iter_mut().enumerate() {
             d.part1();
-            println!("P2");
             d.part2();
         }
     }
