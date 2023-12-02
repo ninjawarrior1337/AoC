@@ -1,8 +1,4 @@
-
-
 use aoc_macros::AoCSetup;
-
-use tracing::{info, Level};
 
 use crate::AoCDay;
 
