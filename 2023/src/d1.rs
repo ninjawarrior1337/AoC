@@ -1,5 +1,6 @@
 use aoc_macros::AoCSetup;
 
+use rayon::{str::ParallelString, iter::ParallelIterator};
 use tracing::{info, Level};
 
 use crate::AoCDay;
@@ -44,7 +45,7 @@ impl AoCDay for D1 {
         let s: &str = self.input();
 
         let a = s
-            .split("\n")
+            .par_lines()
             .map(|s| extract_nums(s))
             .map(|(d1, d2)| d1 * 10 + d2)
             .sum::<u32>();
@@ -56,8 +57,8 @@ impl AoCDay for D1 {
     fn part2(&mut self) {
         let s: &str = self.input();
 
-        let a = s
-            .split("\n")
+        let a: u32 = s
+            .par_lines()
             .map(|s| extract_words(s))
             .map(|(d1, d2)| d1 * 10 + d2)
             .sum::<u32>();
