@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap, BinaryHeap};
+use std::{collections::{HashSet, HashMap, BinaryHeap}, ops::RangeInclusive};
 
 use aoc_macros::AoCSetup;
 use nom::bytes::complete::tag;
@@ -14,18 +14,6 @@ struct Card {
     values: HashSet<u32>,
 }
 
-impl Ord for Card {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.num.cmp(&self.num)
-    }
-}
-
-impl PartialOrd for Card {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
 impl Card {
     #[tracing::instrument(level = "debug", ret)]
     fn score(&self) -> u32 {
@@ -38,21 +26,21 @@ impl Card {
     }
 
     #[tracing::instrument(level = "debug", ret)]
-    fn duplicating_cards(&self) -> Vec<u32> {
+    fn duplicating_cards(&self) -> Option<RangeInclusive<u32>> {
         let winning_count = self.values.intersection(&self.winning).count() as u32;
 
         if winning_count > 0 {
-            (self.num+1..=self.num+winning_count).collect()
+            Some(self.num+1..=self.num+winning_count)
         } else {
-            Vec::new()
+            None
         }
     }
 }
 
+
 #[derive(AoCSetup, Default, Debug)]
 pub struct D4 {
     base_cards: Vec<Card>,
-    card_counts: HashMap<Card, u32>
 }
 
 impl D4 {
@@ -84,7 +72,7 @@ impl D4 {
 }
 
 impl AoCDay for D4 {
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     fn part1(&mut self) {
         let input = self.input();
         let cards: Vec<Card> = input.lines().map(|l| self.parse_line(l)).collect();
@@ -95,22 +83,25 @@ impl AoCDay for D4 {
         info!(s);
     }
 
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     fn part2(&mut self) {
         // Time to invoke the computer science
-        let mut pq: BinaryHeap<Card>  = BinaryHeap::new();
+        let mut pq: BinaryHeap<u32>  = BinaryHeap::new();
         
         for c in &self.base_cards {
-            pq.push(c.clone());
+            pq.push(c.num);
         }
         
         let mut processed = 0;
         while let Some(c) = pq.pop() {
             processed += 1;
-            let cards = c.duplicating_cards();
-            for card_num in cards {
-                let card = self.base_cards.binary_search_by_key(&card_num, |c| c.num).unwrap();
-                pq.push(self.base_cards[card].clone())
+            let card_idx = self.base_cards.binary_search_by_key(&c, |c| c.num).unwrap();
+            let card = &self.base_cards[card_idx];            
+            
+            if let Some(duped_cards) = card.duplicating_cards() {
+                for duped_card_num in duped_cards {
+                    pq.push(duped_card_num)
+                }
             }
         }
 
