@@ -1,8 +1,8 @@
 run day:
-    cargo run -- --day {{day}}
+    cargo run --release -- --day {{day}}
 
 run-all:
-    cargo run
+    cargo run --release
 
 debug day:
     RUST_LOG=debug cargo run -- --day {{day}}
