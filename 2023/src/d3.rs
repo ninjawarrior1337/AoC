@@ -107,6 +107,7 @@ impl AoCDay for D3 {
         let v = input.chars().filter(|c| !c.is_whitespace()).collect();
         self.schematic = Array::from_shape_vec((r, c), v).unwrap();
 
+        // Parse parts once
         input.lines().enumerate().for_each(|(line_num, line)| {
             let parsed_line = parse_line(line);
             for (start, end) in parsed_line {
@@ -120,6 +121,7 @@ impl AoCDay for D3 {
             }
         });
 
+        // Solve
         let p1 = self.schematic
             .indexed_iter()
             .filter(|(_, c)| c.is_symbol())
