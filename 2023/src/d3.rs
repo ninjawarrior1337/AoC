@@ -1,10 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashSet};
 
 use aoc_macros::AoCSetup;
-use ndarray::{concatenate, Array, Array1, Array2, Axis};
-use nom::bytes::complete::tag;
-use rayon::{iter::ParallelIterator, str::ParallelString};
-use tracing::{debug, info, Level};
+use ndarray::{Array};
+
+use rayon::{iter::ParallelIterator};
+use tracing::{info};
 
 use crate::AoCDay;
 
