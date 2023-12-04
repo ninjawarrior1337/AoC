@@ -2,7 +2,7 @@ use std::{collections::{HashSet, HashMap, BinaryHeap}, ops::RangeInclusive, cmp:
 
 use aoc_macros::AoCSetup;
 use nom::bytes::complete::tag;
-use rayon::{iter::ParallelIterator, str::ParallelString};
+use rayon::{iter::{ParallelIterator, IntoParallelRefIterator}, str::ParallelString};
 use tracing::{debug, info, Level};
 
 use crate::AoCDay;
@@ -86,24 +86,27 @@ impl AoCDay for D4 {
     #[tracing::instrument(skip(self))]
     fn part2(&mut self) {
         // Time to invoke the computer science
-        let mut pq  = BinaryHeap::new();
-        
-        for c in &self.base_cards {
+
+        let processed = self.base_cards.par_iter().map(|c| {
+            let mut pq  = BinaryHeap::new();
             pq.push(Reverse(c.num));
-        }
-        
-        let mut processed = 0;
-        while let Some(Reverse(c)) = pq.pop() {
-            processed += 1;
-            let card_idx = self.base_cards.binary_search_by_key(&c, |c| c.num).unwrap();
-            let card = &self.base_cards[card_idx];            
-            
-            if let Some(duped_cards) = card.duplicating_cards() {
-                for duped_card_num in duped_cards {
-                    pq.push(Reverse(duped_card_num))
+
+            let mut processed = 0;
+
+            while let Some(Reverse(c)) = pq.pop() {
+                processed += 1;
+                let card_idx = self.base_cards.binary_search_by_key(&c, |c| c.num).unwrap();
+                let card = &self.base_cards[card_idx];            
+                
+                if let Some(duped_cards) = card.duplicating_cards() {
+                    for duped_card_num in duped_cards {
+                        pq.push(Reverse(duped_card_num))
+                    }
                 }
             }
-        }
+
+            return processed;
+        }).sum::<u32>();        
 
         info!(processed)
     }
