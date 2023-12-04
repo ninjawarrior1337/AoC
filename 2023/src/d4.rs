@@ -26,7 +26,7 @@ impl Card {
     }
 
     #[tracing::instrument(level = "debug", ret)]
-    fn duplicating_cards(&self) -> Option<RangeInclusive<u32>> {
+    fn duplicated_cards(&self) -> Option<RangeInclusive<u32>> {
         let winning_count = self.values.intersection(&self.winning).count() as u32;
 
         if winning_count > 0 {
@@ -98,7 +98,7 @@ impl AoCDay for D4 {
                 let card_idx = self.base_cards.binary_search_by_key(&c, |c| c.num).unwrap();
                 let card = &self.base_cards[card_idx];            
                 
-                if let Some(duped_cards) = card.duplicating_cards() {
+                if let Some(duped_cards) = card.duplicated_cards() {
                     for duped_card_num in duped_cards {
                         pq.push(Reverse(duped_card_num))
                     }
