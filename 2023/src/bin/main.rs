@@ -18,6 +18,7 @@ fn main() -> Result<()> {
     aoc_bind!(days, d1::D1);
     aoc_bind!(days, d2::D2);
     aoc_bind!(days, d3::D3);
+    aoc_bind!(days, d4::D4);
 
     if let Some(d) = args.day {
         let day = &mut days[d - 1];
