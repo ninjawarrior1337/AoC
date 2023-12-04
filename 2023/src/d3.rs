@@ -94,7 +94,7 @@ impl D3 {
 }
 
 impl AoCDay for D3 {
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     fn part1(&mut self) {
         self.parts = HashSet::new();
         let input = self.input();
@@ -132,7 +132,7 @@ impl AoCDay for D3 {
         info!(?p1);
     }
 
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     fn part2(&mut self) {
         let p2 = self.schematic
         .indexed_iter()
