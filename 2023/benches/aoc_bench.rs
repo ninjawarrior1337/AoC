@@ -18,6 +18,14 @@ fn benches(c: &mut Criterion) {
             d2.part2();
         })
     });
+
+    let mut d3 = aoc2023::d3::D3::new();
+    c.bench_function("d3", |b| {
+        b.iter(|| {
+            d3.part1();
+            d3.part2();
+        })
+    });
 }
 
 criterion_group!(aoc_benches, benches);

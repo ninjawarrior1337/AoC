@@ -1,5 +1,5 @@
 use anyhow::Result;
-use aoc2023::{self, aoc_bind, d1, d2, AoCDay, AoCSetup};
+use aoc2023::*;
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -17,6 +17,7 @@ fn main() -> Result<()> {
     let mut days: Vec<Box<dyn AoCDay>> = Vec::new();
     aoc_bind!(days, d1::D1);
     aoc_bind!(days, d2::D2);
+    aoc_bind!(days, d3::D3);
 
     if let Some(d) = args.day {
         let day = &mut days[d - 1];
