@@ -1,6 +1,6 @@
 use aoc_macros::AoCSetup;
 use nom::bytes::complete::tag;
-use rayon::{iter::ParallelIterator, str::ParallelString};
+use rayon::{iter::{ParallelIterator, IntoParallelRefIterator, IntoParallelIterator}, str::ParallelString};
 use tracing::{debug, info, Level};
 use tracing_subscriber::field::debug;
 
@@ -117,9 +117,9 @@ impl AoCDay for D5 {
             .collect();
 
         let p2 = ranges
-            .iter()
+            .par_iter()
             .map(|r| {
-                r.clone().into_iter().map(|e| {
+                r.clone().into_par_iter().map(|e| {
                     let mut s = Mappable(e);
                     self.maps.iter().for_each(|map| {
                         s = s.remap(map);
