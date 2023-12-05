@@ -130,7 +130,6 @@ impl AoCDay for D5 {
             .flatten()
             .min_by_key(|e| e.0);
 
-        debug!("{}", self.seeds.len());
         info!(?p2);
     }
 }
