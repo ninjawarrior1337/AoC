@@ -78,8 +78,8 @@ impl AoCDay for D5 {
                             .split_whitespace()
                             .filter_map(|c| c.parse().ok())
                             .collect::<Vec<_>>();
-
-                        MapDef::try_from(a).ok()
+                        
+                        a.try_into().ok()
                     })
                     .collect::<Vec<MapDef>>();
 
