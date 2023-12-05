@@ -118,8 +118,8 @@ impl AoCDay for D5 {
 
         let p2 = ranges
             .par_iter()
-            .map(|r| {
-                r.clone().into_par_iter().map(|e| {
+            .map(|range| {
+                range.clone().into_par_iter().map(|e| {
                     let mut s = Mappable(e);
                     self.maps.iter().for_each(|map| {
                         s = s.remap(map);
