@@ -50,6 +50,14 @@ fn benches(c: &mut Criterion) {
             d6.part2();
         })
     });
+
+    let mut d7 = aoc2023::d7::D7::new();
+    c.bench_function("d7", |b| {
+        b.iter(|| {
+            d7.part1();
+            d7.part2();
+        })
+    });
 }
 
 criterion_group!(aoc_benches, benches);

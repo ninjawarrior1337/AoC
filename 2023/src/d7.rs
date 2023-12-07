@@ -23,7 +23,7 @@ const SUITS_JOKER: [char; 13] = [
 
 impl Ord for Hand {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        if self.hand_type().cmp(&other.hand_type()) == Ordering::Equal {
+        if self.hand_type() == other.hand_type() {
             for (card, other_card) in self.0.iter().zip(other.0.iter()) {
                 let self_pos = SUITS.iter().position(|x| x == card).unwrap();
                 let other_pos = SUITS.iter().position(|x| x == other_card).unwrap();
@@ -65,59 +65,33 @@ trait HandTypeable {
 struct Joker(pub Hand);
 
 impl HandTypeable for Joker {
-    #[tracing::instrument]
+    #[tracing::instrument(level = "debug", ret)]
     fn hand_type(&self) -> HandType {
-        let mut counts: BTreeMap<char, usize> = BTreeMap::new();
+        let mut joker_hand = self.0 .0;
 
-        for c in self.0 .0 {
-            counts.entry(c).and_modify(|curr| *curr += 1).or_insert(1);
-        }
+        let replacement_suit = joker_hand
+            .iter()
+            .filter(|&k| k != &'J')
+            .max_by_key(|curr_key| joker_hand.iter().filter(|v| curr_key == v).count())
+            .cloned();
 
-        let num_jokers = counts.get(&'J').cloned();
+        debug!(?replacement_suit);
 
-        debug!(?counts);
-
-        if let Some(joker_count) = num_jokers {
-            if joker_count < 5 {
-                let mut non_joker = counts
-                    .iter()
-                    .map(|v| (*v.0, *v.1))
-                    .filter(|(k, _)| k != &'J')
-                    .collect::<Vec<_>>();
-                non_joker.sort_by_key(|(_, count)| *count);
-
-                debug!(?non_joker);
-
-                {
-                    let counts = &mut counts;
-                    *counts.get_mut(&'J').unwrap() -= joker_count;
-                    *counts.get_mut(&non_joker.last().unwrap().0).unwrap() += joker_count;
+        if let Some(rs) = replacement_suit {
+            for suit in joker_hand.iter_mut() {
+                if suit == &'J' {
+                    *suit = rs;
                 }
             }
         }
 
-        let mut values = counts.values().cloned().collect::<Vec<_>>();
-        values.sort();
-        values.reverse();
-
-        debug!(?values);
-
-        match values.as_slice() {
-            &[5, ..] => HandType::FiveOfAKind,
-            &[4, 1, ..] => HandType::FourOfAKind,
-            &[3, 2, ..] => HandType::FullHouse,
-            &[3, 1, 1, ..] => HandType::ThreeOfAKind,
-            &[2, 2, 1, ..] => HandType::TwoPair,
-            &[2, 1, 1, 1, ..] => HandType::OnePair,
-            &[1, 1, 1, 1, 1, ..] => HandType::HighCard,
-            &[..] => panic!("there must be at least one item"),
-        }
+        Hand(joker_hand).hand_type()
     }
 }
 
 impl Ord for Joker {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        if self.hand_type().cmp(&other.hand_type()) == Ordering::Equal {
+        if self.hand_type() == other.hand_type() {
             for (card, other_card) in self.0 .0.iter().zip(other.0 .0.iter()) {
                 let self_pos = SUITS_JOKER.iter().position(|x| x == card).unwrap();
                 let other_pos = SUITS_JOKER.iter().position(|x| x == other_card).unwrap();
@@ -169,7 +143,7 @@ impl HandTypeable for Hand {
             &[2, 2, 1, ..] => HandType::TwoPair,
             &[2, 1, 1, 1, ..] => HandType::OnePair,
             &[1, 1, 1, 1, 1, ..] => HandType::HighCard,
-            &[..] => panic!("there must be at least one item"),
+            &[..] => panic!("there must be at least one match"),
         }
     }
 }
@@ -202,8 +176,6 @@ impl AoCDay for D7 {
             .collect::<Vec<_>>();
 
         self.game = game;
-
-        println!("{:?}", self.game[2].hand.hand_type());
 
         debug!(?self.game);
         self.game.sort_by_key(|p| p.hand);
