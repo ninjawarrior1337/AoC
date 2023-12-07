@@ -1,12 +1,12 @@
-use core::num;
+
 use std::{
     cmp::Ordering,
-    collections::{BTreeMap, HashMap},
+    collections::{BTreeMap},
     str::Chars,
 };
 
 use aoc_macros::AoCSetup;
-use tracing::{debug, info, Level};
+use tracing::{debug, info};
 
 use crate::AoCDay;
 

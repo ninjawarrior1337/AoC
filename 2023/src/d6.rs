@@ -1,7 +1,7 @@
 use aoc_macros::AoCSetup;
-use nom::bytes::complete::tag;
-use rayon::{iter::ParallelIterator, str::ParallelString};
-use tracing::{debug, info, Level};
+
+use rayon::{iter::ParallelIterator};
+use tracing::{debug, info};
 
 use crate::AoCDay;
 

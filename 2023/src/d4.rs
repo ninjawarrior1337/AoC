@@ -1,9 +1,9 @@
-use std::{collections::{HashSet, HashMap, BinaryHeap}, ops::RangeInclusive, cmp::Reverse};
+use std::{collections::{HashSet, BinaryHeap}, ops::RangeInclusive, cmp::Reverse};
 
 use aoc_macros::AoCSetup;
-use nom::bytes::complete::tag;
-use rayon::{iter::{ParallelIterator, IntoParallelRefIterator}, str::ParallelString};
-use tracing::{debug, info, Level};
+
+use rayon::{iter::{ParallelIterator, IntoParallelRefIterator}};
+use tracing::{info};
 
 use crate::AoCDay;
 
