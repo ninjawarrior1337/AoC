@@ -4,3 +4,4 @@
 ## 2020: Go / Python
 ## 2021: Ruby / Python
 ## 2022: Python
+## 2023: Rust
