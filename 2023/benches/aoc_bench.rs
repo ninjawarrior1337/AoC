@@ -17,6 +17,7 @@ fn benches(c: &mut Criterion) {
     aoc_bench!(c, d7);
     aoc_bench!(c, d8);
     aoc_bench!(c, d9);
+    aoc_bench!(c, d10);
 }
 
 criterion_group!(aoc_benches, benches);
