@@ -166,6 +166,11 @@ impl AoCDay for D10 {
         let rows = self.input().lines().count() as isize;
         let cols = self.input().lines().nth(0).unwrap().chars().count() as isize;
 
+        let mut seen_map = HashMap::new();
+        self.seen.iter().for_each(|pipe| {
+            seen_map.insert(pipe.pos, pipe);
+        });
+
         let mut enclosed = 0;
 
         // Crossing number rule
@@ -174,7 +179,7 @@ impl AoCDay for D10 {
             let mut crossing_number = 0;
             let mut previous_pipe: Option<&Pipe> = None;
             for c in 0..cols {  
-                if let Some(pipe) = self.seen.iter().filter(|x| x.pos == (r, c)).nth(0) {
+                if let Some(pipe) = seen_map.get(&(r, c)) {
                     // Horizontal lines don't change the crossing number
                     if pipe.pipe_type == '-' {
                         continue;
