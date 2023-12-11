@@ -191,12 +191,6 @@ impl AoCDay for D10 {
                             continue;
                         }
                     }
-
-                    // Ground doesn't change the crossing number.
-                    if pipe.pipe_type == '.' {
-                        continue;
-                    }
-
                     crossing_number += 1;
 
                     previous_pipe = Some(pipe);
