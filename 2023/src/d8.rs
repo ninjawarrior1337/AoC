@@ -1,11 +1,11 @@
 use std::{collections::HashMap, iter::repeat};
 
-use anyhow::Error;
+
 use aoc_macros::AoCSetup;
-use nom::bytes::complete::tag;
+
 use num::integer::lcm;
-use rayon::{str::ParallelString, iter::ParallelIterator};
-use tracing::{debug, info, Level};
+use rayon::{iter::ParallelIterator};
+use tracing::{debug, info};
 
 use crate::AoCDay;
 

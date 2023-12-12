@@ -1,17 +1,10 @@
-use std::{collections::{HashSet, HashMap}, default, os::unix::raw::uid_t};
+use std::collections::HashMap;
 
 use aoc_macros::AoCSetup;
 use itertools::Itertools;
-use ndarray::Array2;
-use nom::bytes::complete::tag;
-use num::traits::Pow;
-use pathfinding::directed::{astar::astar, dijkstra::dijkstra};
-use petgraph::graph::UnGraph;
-use rayon::{
-    iter::{ParallelBridge, ParallelIterator},
-    str::ParallelString,
-};
-use tracing::{debug, info, Level};
+
+use rayon::iter::ParallelIterator;
+use tracing::{debug, info};
 
 use crate::AoCDay;
 
@@ -76,19 +69,23 @@ impl Universe {
             hm.insert(coord, Element::Galaxy);
         });
 
-        let empty_rows: Vec<usize> = (0..self.0.len()).filter(|&r| self.is_empty_row(r)).collect();
-        let empty_cols: Vec<usize> = (0..self.0[0].len()).filter(|&c| self.is_empty_col(c)).collect();
+        let empty_rows: Vec<usize> = (0..self.0.len())
+            .filter(|&r| self.is_empty_row(r))
+            .collect();
+        let empty_cols: Vec<usize> = (0..self.0[0].len())
+            .filter(|&c| self.is_empty_col(c))
+            .collect();
 
         debug!(?empty_rows, ?empty_cols);
 
         // Expand time
-        let added = by-1;
+        let added = by - 1;
 
         for (i, row) in empty_rows.iter().enumerate() {
             let keys: Vec<(usize, usize)> = hm.keys().cloned().collect();
 
             for k in keys.iter() {
-                if k.0 > (*row + (i*added)) {
+                if k.0 > (*row + (i * added)) {
                     hm.remove(k);
                     hm.insert((k.0 + added, k.1), Element::Galaxy);
                 }
@@ -99,13 +96,13 @@ impl Universe {
             let keys: Vec<(usize, usize)> = hm.keys().cloned().collect();
 
             for k in keys.iter() {
-                if k.1 > (*col + (i*added)) {
+                if k.1 > (*col + (i * added)) {
                     hm.remove(&k);
                     hm.insert((k.0, k.1 + added), Element::Galaxy);
                 }
             }
         }
-    
+
         SparseUniverse(hm)
     }
 }
@@ -126,14 +123,16 @@ impl AoCDay for D11 {
         let su = universe.expanded(2);
         debug!(?su);
 
-        let lengths_sum: usize = su.0.keys().combinations(2)
-        .map(|pair| {
-            let p1 = pair[0];
-            let p2 = pair[1];
+        let lengths_sum: usize =
+            su.0.keys()
+                .combinations(2)
+                .map(|pair| {
+                    let p1 = pair[0];
+                    let p2 = pair[1];
 
-            Universe::dist(*p1, *p2)
-        })
-        .sum();
+                    Universe::dist(*p1, *p2)
+                })
+                .sum();
 
         info!(?lengths_sum);
     }
@@ -150,14 +149,16 @@ impl AoCDay for D11 {
         let su = universe.expanded(1_000_000);
         debug!(?su);
 
-        let lengths_sum: usize = su.0.keys().combinations(2)
-        .map(|pair| {
-            let p1 = pair[0];
-            let p2 = pair[1];
+        let lengths_sum: usize =
+            su.0.keys()
+                .combinations(2)
+                .map(|pair| {
+                    let p1 = pair[0];
+                    let p2 = pair[1];
 
-            Universe::dist(*p1, *p2)
-        })
-        .sum();
+                    Universe::dist(*p1, *p2)
+                })
+                .sum();
 
         info!(?lengths_sum);
     }

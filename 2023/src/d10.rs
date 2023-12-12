@@ -1,13 +1,10 @@
-use std::{collections::{HashMap, BinaryHeap, VecDeque, HashSet}, default};
+use std::{collections::{HashMap, VecDeque, HashSet}};
 
 use aoc_macros::AoCSetup;
-use nom::bytes::complete::tag;
-use petgraph::{
-    prelude::NodeIndex,
-    visit::{IntoEdges, IntoNeighbors, IntoNodeReferences},
-};
-use rayon::{iter::ParallelIterator, str::ParallelString};
-use tracing::{debug, info, Level};
+
+
+use rayon::{iter::ParallelIterator};
+use tracing::{debug, info};
 
 use crate::AoCDay;
 
