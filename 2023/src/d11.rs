@@ -27,7 +27,7 @@ impl TryFrom<char> for Element {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct Universe(Vec<Vec<Element>>);
 
 #[derive(Debug)]
@@ -108,10 +108,12 @@ impl Universe {
 }
 
 #[derive(AoCSetup, Default, Debug)]
-pub struct D11 {}
+pub struct D11 {
+    universe: Universe
+}
 
 impl AoCDay for D11 {
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     fn part1(&mut self) {
         let universe_data = self
             .input()
@@ -119,8 +121,8 @@ impl AoCDay for D11 {
             .map(|line| line.chars().filter_map(|c| c.try_into().ok()).collect())
             .collect();
 
-        let universe = Universe(universe_data);
-        let su = universe.expanded(2);
+        self.universe = Universe(universe_data);
+        let su = self.universe.expanded(2);
         debug!(?su);
 
         let lengths_sum: usize =
@@ -137,16 +139,9 @@ impl AoCDay for D11 {
         info!(?lengths_sum);
     }
 
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     fn part2(&mut self) {
-        let universe_data = self
-            .input()
-            .lines()
-            .map(|line| line.chars().filter_map(|c| c.try_into().ok()).collect())
-            .collect();
-
-        let universe = Universe(universe_data);
-        let su = universe.expanded(1_000_000);
+        let su = self.universe.expanded(1_000_000);
         debug!(?su);
 
         let lengths_sum: usize =
