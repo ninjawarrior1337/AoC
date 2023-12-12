@@ -5,7 +5,7 @@ run-all:
     cargo run --release
 
 debug day:
-    RUST_LOG=debug cargo run -- --day {{day}}
+    RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- --day {{day}}
 
 debug-all:
     RUST_LOG=debug cargo run
