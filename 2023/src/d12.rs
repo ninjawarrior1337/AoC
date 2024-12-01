@@ -53,55 +53,74 @@ impl Record {
     fn possibilities_count(&self) -> usize {
         #[memoize]
         fn rec_poss_count(states: Vec<Status>, pattern: Vec<usize>) -> usize {
-            if states.len() == 0 {
-                return if pattern.len() == 0 {
-                    1
-                } else {
-                    0
-                }
-            }
 
-            if states.starts_with(&[Status::Working]) {
-                return rec_poss_count(states[1..].to_vec(), pattern)
-            }
+            match (states.as_slice(), pattern.as_slice()) {
+                (&[], &[]) => 1,
+                (&[], &[_]) => 0,
 
-            if states.starts_with(&[Status::Unknown]) {
-                // Two universes, one where ? is # and one where its .
-                let mut working_slice = states.to_owned();
-                let mut broken_slice = states.to_owned();
+                (&[Status::Working], _) => rec_poss_count(states[1..].to_vec(), pattern),
+                (&[Status::Unknown], _) => {
+                    let mut working_slice = states.to_owned();
+                    let mut broken_slice = states.to_owned();
 
-                working_slice[0] = Status::Working;
-                broken_slice[0] = Status::Broken;
+                    working_slice[0] = Status::Working;
+                    broken_slice[0] = Status::Broken;
 
-                return rec_poss_count(working_slice, pattern.clone()) + rec_poss_count(broken_slice, pattern.clone())
-            }
-
-            if states.starts_with(&[Status::Broken]) {
-                if pattern.len() == 0 {
-                    return 0;
-                }
-
-                if states.len() < pattern[0] {
-                    return 0;
-                }
-
-                if states[0..pattern[0]].iter().any(|c| c == &Status::Working) {
-                    return 0;
-                }
+                    return rec_poss_count(working_slice, pattern.clone()) + rec_poss_count(broken_slice, pattern.clone())
+                },
+                (&[Status::Broken], &[]) => 0,
                 
-                if pattern.len() > 1 {
-                    if states.len() < pattern[0] + 1 || states[pattern[0]] == Status::Broken {
-                        return 0
-                    }
-
-                    return rec_poss_count(states[pattern[0]+1..].to_vec(), pattern[1..].to_vec())
-                } else {
-                    return rec_poss_count(states[pattern[0]..].to_vec(), pattern[1..].to_vec())
-                }
             }
 
-            panic!("wtf");
-        }
+        //     if states.len() == 0 {
+        //         return if pattern.len() == 0 {
+        //             1
+        //         } else {
+        //             0
+        //         }
+        //     }
+
+        //     if states.starts_with(&[Status::Working]) {
+        //         return rec_poss_count(states[1..].to_vec(), pattern)
+        //     }
+
+        //     if states.starts_with(&[Status::Unknown]) {
+        //         // Two universes, one where ? is # and one where its .
+        //         let mut working_slice = states.to_owned();
+        //         let mut broken_slice = states.to_owned();
+
+        //         working_slice[0] = Status::Working;
+        //         broken_slice[0] = Status::Broken;
+
+        //         return rec_poss_count(working_slice, pattern.clone()) + rec_poss_count(broken_slice, pattern.clone())
+        //     }
+
+        //     if states.starts_with(&[Status::Broken]) {
+        //         if pattern.len() == 0 {
+        //             return 0;
+        //         }
+
+        //         if states.len() < pattern[0] {
+        //             return 0;
+        //         }
+
+        //         if states[0..pattern[0]].iter().any(|c| c == &Status::Working) {
+        //             return 0;
+        //         }
+                
+        //         if pattern.len() > 1 {
+        //             if states.len() < pattern[0] + 1 || states[pattern[0]] == Status::Broken {
+        //                 return 0
+        //             }
+
+        //             return rec_poss_count(states[pattern[0]+1..].to_vec(), pattern[1..].to_vec())
+        //         } else {
+        //             return rec_poss_count(states[pattern[0]..].to_vec(), pattern[1..].to_vec())
+        //         }
+        //     }
+
+        //     panic!("wtf");
+        // }
 
         rec_poss_count(self.states.clone(), self.pattern.clone())
     }
