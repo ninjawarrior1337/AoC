@@ -18,7 +18,7 @@ fun main() {
         return left.sumOf { it * right.count { a -> a == it } }
     }
 
-    val input = readInput("Day01")
+    val input = readInputLines("Day01")
     part1(input).println()
     part2(input).println()
 }

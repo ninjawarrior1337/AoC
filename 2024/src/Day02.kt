@@ -38,7 +38,7 @@ fun main() {
         }.count {it}
     }
 
-    val input = readInput("Day02")
+    val input = readInputLines("Day02")
     part1(input).println()
     part2(input).println()
 }
