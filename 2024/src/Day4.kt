@@ -1,5 +1,3 @@
-import kotlin.math.absoluteValue
-
 val PairSets = setOf(
     listOf(Pair(0, 0), Pair(1, 0), Pair(2, 0), Pair(3, 0)),
     listOf(Pair(0, 0), Pair(0, 1), Pair(0, 2), Pair(0, 3)),
