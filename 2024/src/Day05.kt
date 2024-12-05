@@ -4,8 +4,8 @@ data class Rule(val before: Int, val after: Int)
 
 data class Page(val rules: List<Rule>, val num: Int) : Comparable<Page> {
     override fun compareTo(other: Page): Int {
-        val rGt = rules.firstOrNull() { it.before == this.num && it.after == other.num }
-        val rLt = rules.firstOrNull() { it.after == this.num && it.before == other.num }
+        val rGt = rules.firstOrNull { it.before == this.num && it.after == other.num }
+        val rLt = rules.firstOrNull { it.after == this.num && it.before == other.num }
         return when {
             rGt != null -> -1
             rLt != null -> 1
@@ -28,7 +28,7 @@ data class ProblemSet(val rules: List<Rule>, val pages: List<List<Int>>) {
     }
 
     fun isPageListValid(pages: List<Int>): Boolean {
-        return pages.map { Page(this.rules, it) }.sorted().map { it.num } == pages
+        return pages.map { Page(this.rules, it) }.windowed(2).all { it[0].compareTo(it[1]) == -1 }
     }
 
     fun fixPageList(pages: List<Int>): List<Int> {
