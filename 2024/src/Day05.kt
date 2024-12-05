@@ -44,8 +44,7 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return ps.pages.parallelStream().filter { !ps.isPageListValid(it) }.map { pages -> ps.fixPageList(pages) }
-            .collect(Collectors.toList()).sumOf { it[it.size / 2] }
+        return ps.pages.filter { !ps.isPageListValid(it) }.map { pages -> ps.fixPageList(pages) }.sumOf { it[it.size / 2] }
     }
 
     part1(input).println()
