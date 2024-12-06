@@ -77,11 +77,13 @@ fun main() {
         return null
     }
 
+    var posS = setOf<Pair<Int, Int>>()
+
     fun part1(input: List<CharArray>): Int {
         val pos = getGuardPosition(input)!!
         val state = GameState(input, Pair(pos.first, pos.second), Facing.Up)
 
-        val posS = state.simulatePositions()
+        posS = state.simulatePositions()
 
         return posS.size
     }
@@ -89,12 +91,10 @@ fun main() {
     fun part2(input: List<CharArray>): Long {
         val pos = getGuardPosition(input)!!
 
-        val states = input.withIndex().flatMap { (rIdx, r) ->
-            r.withIndex().filter { (_, c) -> c == '.' }.map {
-                val newInput = input.map { i -> i.copyOf() }
-                newInput[rIdx][it.index] = '#'
-                GameState(newInput, Pair(pos.first, pos.second), Facing.Up)
-            }
+        val states = posS.map {
+            val newInput = input.map { i -> i.copyOf() }
+            newInput[it.first][it.second] = '#'
+            GameState(newInput, Pair(pos.first, pos.second), Facing.Up)
         }
 
         return states.parallelStream().filter {!it.simulateLoopCheck()}.count()
