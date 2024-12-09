@@ -12,49 +12,31 @@ data class AntennaMap(private val grid: List<CharArray>) {
         }
     }
 
-    private fun getAntiNodesForAntennaId(aId: Char): List<Point2D> {
+    private fun getAntiNodesForAntennaId(aId: Char, full: Boolean = false): List<Point2D> {
         val antennaPos = this.antennaPositions[aId]!!
-        val lines = mutableSetOf<Line>()
 
-        for (p in antennaPos) {
-            for (s in antennaPos) {
-                if (p != s) {
-                    lines.add(Line(p, s))
-                }
+        val lines = antennaPos.flatMap { p ->
+            antennaPos.filter { s -> s != p }.map {
+                s -> Line(p, s)
             }
-        }
+        }.toSet()
 
-        return lines.flatMap {
-            val delta = it.delta()
-            listOf(it.a + delta, it.b - delta)
-        }.filter { grid.inBounds(it) }
-    }
-
-    private fun getFullAntiNodesForAntennaId(aId: Char): List<Point2D> {
-        val antennaPos = this.antennaPositions[aId]!!
-        val lines = mutableSetOf<Line>()
-
-        for (p in antennaPos) {
-            for (s in antennaPos) {
-                if (p != s) {
-                    lines.add(Line(p, s))
-                }
+        return when(full) {
+            true -> lines.flatMap { line ->
+                val delta = line.delta()
+                generateSequence(line.a) { it-delta }.takeWhile { grid.inBounds(it) }.toSet() +
+                generateSequence(line.a) { it+delta }.takeWhile { grid.inBounds(it) }.toSet()
             }
-        }
-
-        return lines.flatMap { line ->
-            val delta = line.delta()
-            generateSequence(line.a) { it-delta }.takeWhile { grid.inBounds(it) }.toSet() +
-            generateSequence(line.a) { it+delta }.takeWhile { grid.inBounds(it) }.toSet()
+            false -> lines.flatMap {
+                val delta = it.delta()
+                listOf(it.a + delta, it.b - delta)
+            }.filter { grid.inBounds(it) }
         }
     }
 
     fun findAntiNodes(full: Boolean = false): Set<Pair<Int, Int>> {
         return this.antennaPositions.keys.flatMap { aId ->
-            when(full) {
-                false -> this.getAntiNodesForAntennaId(aId)
-                true -> this.getFullAntiNodesForAntennaId(aId)
-            }
+            this.getAntiNodesForAntennaId(aId, full)
         }.toSet()
     }
 }
