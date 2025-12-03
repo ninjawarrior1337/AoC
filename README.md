@@ -5,3 +5,4 @@
 ## 2022: Python
 ## 2023: Rust
 ## 2024: Kotlin
+## 2025: TypeScript + Effect
