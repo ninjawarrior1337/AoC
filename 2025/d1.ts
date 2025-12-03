@@ -1,6 +1,6 @@
 import { Chunk, Console, Data, Effect, pipe, Stream } from "effect";
 
-const file = Bun.file("./input.txt");
+const file = Bun.file("./inputs/d1.txt");
 
 const lines = await file.text().then((v) => v.split("\n"));
 

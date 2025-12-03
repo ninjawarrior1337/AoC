@@ -3,7 +3,7 @@ import { Console, Effect, pipe, Stream } from "effect";
 const isInvalidId = (by: RegExp) => (id: number) =>
   Effect.succeed(by.test(id.toString()));
 
-const file = await Bun.file("input2.txt");
+const file = await Bun.file("inputs/d2.txt");
 const ranges = (await file.text()).split(",");
 
 const numsStream = Stream.fromIterable(ranges).pipe(
