@@ -1,3 +1,5 @@
+import { Effect, Stream } from "effect";
+
 const file = await Bun.file("inputs/d4.txt");
 
 const dirs = [
@@ -13,12 +15,11 @@ const dirs = [
 
 const grid = (await file.text()).split("\n").map((x) => x.split(""));
 
-let count = 0;
+type Grid = typeof grid;
 
-let rmQueue: [number, number][] = [];
-
-do {
-    rmQueue = []
+const removeToiletPaper = (grid: Grid): [number, Grid] => {
+  let count = 0;
+  const newGrid = structuredClone(grid);
 
   grid.forEach((row, ridx) =>
     row.forEach((col, colIdx) => {
@@ -31,21 +32,30 @@ do {
             return undefined;
           }
           const v = grid.at(rN)?.at(cN);
-        //   console.log(rN, cN, v);
           return v;
         })
         .reduce((acc, v) => (v === "@" ? acc + 1 : acc), 0);
 
       if (ct < 4 && col === "@") {
         count++;
-        rmQueue.push([ridx, colIdx])
+        newGrid[ridx]![colIdx] = ".";
       }
     })
   );
 
-  for(const v of rmQueue) {
-    grid[v[0]]![v[1]] = "."
-  }
-} while (rmQueue.length > 0);
+  return [count, newGrid];
+};
 
-console.log(count);
+const [part1, _] = removeToiletPaper(grid);
+console.log(part1);
+
+const part2Effect = Stream.iterate([0, grid] as [number, Grid], ([_, g]) => removeToiletPaper(g))
+    .pipe(
+        Stream.drop(1),
+        Stream.takeWhile(c => c[0] > 0),
+        Stream.map(v => v[0]),
+        Stream.runSum
+    )
+
+const part2 = Effect.runSync(part2Effect)
+console.log(part2)
