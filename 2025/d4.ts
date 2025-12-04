@@ -49,13 +49,14 @@ const removeToiletPaper = (grid: Grid): [number, Grid] => {
 const [part1, _] = removeToiletPaper(grid);
 console.log(part1);
 
-const part2Effect = Stream.iterate([0, grid] as [number, Grid], ([_, g]) => removeToiletPaper(g))
-    .pipe(
-        Stream.drop(1),
-        Stream.takeWhile(c => c[0] > 0),
-        Stream.map(v => v[0]),
-        Stream.runSum
-    )
+const part2Effect = Stream.iterate([0, grid] as [number, Grid], ([_, g]) =>
+  removeToiletPaper(g)
+).pipe(
+  Stream.drop(1),
+  Stream.takeWhile((c) => c[0] > 0),
+  Stream.map((v) => v[0]),
+  Stream.runSum
+);
 
-const part2 = Effect.runSync(part2Effect)
-console.log(part2)
+const part2 = Effect.runSync(part2Effect);
+console.log(part2);
