@@ -11,7 +11,7 @@ const rangeFromString = (range: string) =>
 const insideRange = (r: Range, n: number) => n >= r[0] && n <= r[1];
 
 const composeRange = (a: Range, b: Range): Range[] => {
-  if (a[1] < b[0] || b[1] < a[0]) {
+  if (a[1] < b[0]) {
     return [a, b];
   }
 
