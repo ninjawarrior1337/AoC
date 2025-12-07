@@ -1,4 +1,5 @@
 import { Array } from "effect";
+import { memoize, parseGridAs } from "./utils";
 
 type Cell = "S" | "|" | "^" | ".";
 
@@ -6,9 +7,7 @@ type Grid = Cell[][];
 
 const file = await Bun.file("./inputs/d7.txt");
 
-const parseGrid = (input: string): Grid => {
-  return input.split("\n").map((v) => v.split("")) as Grid;
-};
+const parseGrid = (input: string): Grid => parseGridAs<Grid>(input);
 
 const nextRow = ([prev, v]: [Cell[], Cell[]]) => {
   let splitCount = 0;
@@ -51,34 +50,27 @@ const grid = parseGrid(await file.text());
 
 console.log(doSimPart1(grid).splitCount);
 
-const timelines = (memo: Map<string, number>, input: Grid) => {
-  const fn = (r: number, c: number) => {
+const mkTimelines = (input: Grid) => {
+  const fn = memoize(({ r, c }: { r: number; c: number }) => {
     if (r == input.length) {
       return 1;
-    }
-
-    const cacheV = memo.get(`${r} ${c}`);
-    if (cacheV) {
-      return cacheV;
     }
 
     let res = 0;
 
     if (input.at(r)?.at(c) === "^") {
-      res += fn(r + 1, c + 1) + fn(r + 1, c - 1);
+      res += fn({ r: r + 1, c: c + 1 }) + fn({ r: r + 1, c: c - 1 });
     } else {
-      res += fn(r + 1, c);
+      res += fn({ r: r + 1, c });
     }
 
-    memo.set(`${r} ${c}`, res);
-
     return res;
-  };
+  });
 
   return fn;
 };
 
-const mkTimelines = timelines(new Map(), grid);
+const timelines = mkTimelines(grid);
 const loc = grid.at(0)!.findIndex((x) => x == "S");
 
-console.log(mkTimelines(0, loc));
+console.log(timelines({ r: 0, c: loc }));
