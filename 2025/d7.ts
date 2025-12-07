@@ -38,8 +38,14 @@ const nextRow = ([prev, v]: [Cell[], Cell[]]) => {
     if (prev[cellIdx] == "|") {
       if (cell == "^") {
         splitCount++;
-        manyWorlds = HashSet.add(manyWorlds, Data.array(v.with(cellIdx + 1, "|")));
-        manyWorlds = HashSet.add(manyWorlds, Data.array(v.with(cellIdx - 1, "|")));
+        manyWorlds = HashSet.add(
+          manyWorlds,
+          Data.array(v.with(cellIdx + 1, "|"))
+        );
+        manyWorlds = HashSet.add(
+          manyWorlds,
+          Data.array(v.with(cellIdx - 1, "|"))
+        );
       }
 
       if (cell == ".") {
@@ -49,7 +55,10 @@ const nextRow = ([prev, v]: [Cell[], Cell[]]) => {
   });
 
   return HashSet.size(manyWorlds) > 0
-    ? { rows: HashSet.toValues(manyWorlds).map(v => Array.copy(v)), splitCount }
+    ? {
+        rows: HashSet.toValues(manyWorlds).map((v) => Array.copy(v)),
+        splitCount,
+      }
     : { rows: [v], splitCount };
 };
 
@@ -67,17 +76,34 @@ const doSimPart1 = (grid: Grid) => {
 };
 
 const grid = parseGrid(await file.text());
-// console.log(doSimPart1(grid).splitCount);
+console.log(doSimPart1(grid).splitCount);
 
-console.log(grid.length)
+const gridToCtGrid = (grid: Grid) =>
+  grid
+    .map((row) => row.map((v) => (v == "^" ? -1 : v == "S" ? 1 : 0) as number))
+    .filter((row) => row.reduce((acc, v) => acc + v, 0) != 0);
 
-let initialConditions = [grid[0]!]
-for(const row of grid.slice(1)) {
-    initialConditions = initialConditions.flatMap(prev => {
-        const {rows: worlds} = nextRow([prev, row])
+const ctGrid = gridToCtGrid(grid);
 
-        return worlds
+const end = ctGrid.slice(1).reduce(
+  (prev, next) => {
+    const last = prev.at(-1)!
+
+    next.forEach((cell, cellIdx) => {
+        const prevV = last[cellIdx]!
+        if(prevV <= 0) {
+            return
+        }
+        if(cell == -1) {
+            next = next.with(cellIdx-1, next[cellIdx-1]!+prevV).with(cellIdx+1, next[cellIdx+1]!+prevV)
+        } else {
+            next = next.with(cellIdx, prevV+next[cellIdx]!)
+        }
     })
-}
 
-console.log(initialConditions.length)
+    return [...prev, next];
+  },
+  [ctGrid[0]!]
+);
+
+console.log(end.at(-1)!.filter(x => x>0).reduce((acc, v) => acc+v))
