@@ -87,23 +87,27 @@ const ctGrid = gridToCtGrid(grid);
 
 const end = ctGrid.slice(1).reduce(
   (prev, next) => {
-    const last = prev.at(-1)!
+    const n = Array.copy(next)
 
-    next.forEach((cell, cellIdx) => {
-        const prevV = last[cellIdx]!
-        if(prevV <= 0) {
-            return
-        }
-        if(cell == -1) {
-            next = next.with(cellIdx-1, next[cellIdx-1]!+prevV).with(cellIdx+1, next[cellIdx+1]!+prevV)
-        } else {
-            next = next.with(cellIdx, prevV+next[cellIdx]!)
-        }
-    })
+    for(let col = 0; col < n.length; col++) {
+      const prevV = prev![col]!
+      const cell = n[col]!
 
-    return [...prev, next];
+      if(prevV <= 0) {
+        continue;
+      }
+
+      if(cell == -1) {
+        n[col-1]! += prevV
+        n[col+1]! += prevV
+      } else {
+        n[col]! += prevV
+      }
+    }
+
+    return n;
   },
-  [ctGrid[0]!]
+  ctGrid[0]!
 );
 
-console.log(end.at(-1)!.filter(x => x>0).reduce((acc, v) => acc+v))
+console.log(end.filter(x => x>0).reduce((acc, v) => acc+v))
