@@ -1,4 +1,4 @@
-import { Array, Data, HashSet } from "effect";
+import { Array } from "effect";
 
 type Cell = "S" | "|" | "^" | ".";
 
@@ -10,104 +10,75 @@ const parseGrid = (input: string): Grid => {
   return input.split("\n").map((v) => v.split("")) as Grid;
 };
 
-const combineRows = (rows: readonly Cell[][]): Cell[] =>
-  rows.reduce((acc, v) => {
-    if (acc.length == 0) {
-      return v;
-    }
-
-    return acc.map((cellAcc, cellAccIdx): Cell => {
-      if (cellAcc == "|" || v[cellAccIdx] == "|") {
-        return "|";
-      }
-
-      return cellAcc;
-    });
-  }, [] as Cell[]);
-
 const nextRow = ([prev, v]: [Cell[], Cell[]]) => {
   let splitCount = 0;
-  let manyWorlds = HashSet.empty<readonly Cell[]>();
 
+  const nRow = Array.copy(v);
   v.forEach((cell, cellIdx) => {
     if (prev[cellIdx] == "S") {
-      v = v.with(cellIdx, "|");
+      nRow[cellIdx] = "|";
       return;
     }
 
     if (prev[cellIdx] == "|") {
       if (cell == "^") {
         splitCount++;
-        manyWorlds = HashSet.add(
-          manyWorlds,
-          Data.array(v.with(cellIdx + 1, "|"))
-        );
-        manyWorlds = HashSet.add(
-          manyWorlds,
-          Data.array(v.with(cellIdx - 1, "|"))
-        );
+        nRow[cellIdx + 1] = "|";
+        nRow[cellIdx - 1] = "|";
       }
 
       if (cell == ".") {
-        v = v.with(cellIdx, "|");
+        nRow[cellIdx] = "|";
       }
     }
   });
 
-  return HashSet.size(manyWorlds) > 0
-    ? {
-        rows: HashSet.toValues(manyWorlds).map((v) => Array.copy(v)),
-        splitCount,
-      }
-    : { rows: [v], splitCount };
+  return { next: nRow, splitCount };
 };
 
 const doSimPart1 = (grid: Grid) => {
-  return grid.reduce(
-    ({ grid: acc, splitCount }, v) => {
-      const previous = acc.at(-1)!;
+  return grid.slice(1).reduce(
+    (state, row) => {
+      const { next, splitCount: sc } = nextRow([state.prev, row]);
 
-      const { rows, splitCount: sc } = nextRow([previous, v]);
-
-      return { grid: [...acc, combineRows(rows)], splitCount: splitCount + sc };
+      return { prev: next, splitCount: sc + state.splitCount };
     },
-    { splitCount: 0, grid: [grid[0]] as Grid }
+    { splitCount: 0, prev: grid.at(0)! }
   );
 };
 
 const grid = parseGrid(await file.text());
+
 console.log(doSimPart1(grid).splitCount);
 
-const gridToCtGrid = (grid: Grid) =>
-  grid
-    .map((row) => row.map((v) => (v == "^" ? -1 : v == "S" ? 1 : 0) as number))
-    .filter((row) => row.reduce((acc, v) => acc + v, 0) != 0);
-
-const ctGrid = gridToCtGrid(grid);
-
-const end = ctGrid.slice(1).reduce(
-  (prev, next) => {
-    const n = Array.copy(next)
-
-    for(let col = 0; col < n.length; col++) {
-      const prevV = prev![col]!
-      const cell = n[col]!
-
-      if(prevV <= 0) {
-        continue;
-      }
-
-      if(cell == -1) {
-        n[col-1]! += prevV
-        n[col+1]! += prevV
-      } else {
-        n[col]! += prevV
-      }
+const timelines = (memo: Map<string, number>, input: Grid) => {
+  const fn = (r: number, c: number) => {
+    if (r == input.length) {
+      return 1;
     }
 
-    return n;
-  },
-  ctGrid[0]!
-);
+    const cacheV = memo.get(`${r} ${c}`);
+    if (cacheV) {
+      return cacheV;
+    }
 
-console.log(end.filter(x => x>0).reduce((acc, v) => acc+v))
+    let res = 0;
+
+    if (input.at(r)?.at(c) === "^") {
+      res += fn(r + 1, c + 1) + fn(r + 1, c - 1);
+    } else {
+      res += fn(r + 1, c);
+    }
+
+    memo.set(`${r} ${c}`, res);
+
+    return res;
+  };
+
+  return fn;
+};
+
+const mkTimelines = timelines(new Map(), grid);
+const loc = grid.at(0)!.findIndex((x) => x == "S");
+
+console.log(mkTimelines(0, loc));
