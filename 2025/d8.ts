@@ -24,12 +24,6 @@ const sortedDistances = distances.toSorted(({ dist: a }, { dist: b }) => a - b);
 
 type Circuit = JunctionBox[];
 
-const inCircuit = (circuits: Circuit[], box: JunctionBox) =>
-  circuits
-    .flatMap((v) => v)
-    .map((v) => JSON.stringify(v))
-    .includes(JSON.stringify(box));
-
 const findCircuitContaining = (circuits: Circuit[], box: JunctionBox) =>
   circuits.reduce(
     (acc, circuit, circuitIdx) =>
@@ -40,41 +34,40 @@ const findCircuitContaining = (circuits: Circuit[], box: JunctionBox) =>
   );
 
 const foldSrcDestPairs = (
-  acc: Circuit[],
+  circuits: Circuit[],
   { src, dest }: { src: JunctionBox; dest: JunctionBox; dist: number }
 ) => {
-  const srcIn = inCircuit(acc, src);
-  const destIn = inCircuit(acc, dest);
+  const srcCircuit = findCircuitContaining(circuits, src);
+  const destCircuit = findCircuitContaining(circuits, dest);
+  const srcIn = srcCircuit !== -1;
+  const destIn = destCircuit !== -1;
 
   if (srcIn && destIn) {
-    const srcCircuit = findCircuitContaining(acc, src);
-    const destCircuit = findCircuitContaining(acc, dest);
-
     if (srcCircuit === destCircuit) {
-      return acc;
+      return circuits;
     } else {
       return pipe(
-        acc,
-        Array.modify(srcCircuit, (a) => Array.appendAll(a, acc[destCircuit]!)),
+        circuits,
+        Array.modify(srcCircuit, (a) => Array.appendAll(a, circuits[destCircuit]!)),
         Array.remove(destCircuit)
       );
     }
   } else if (srcIn && !destIn) {
     return pipe(
-      acc,
-      Array.modify(findCircuitContaining(acc, src), (a) =>
+      circuits,
+      Array.modify(srcCircuit, (a) =>
         Array.append(a, dest)
       )
     );
   } else if (!srcIn && destIn) {
     return pipe(
-      acc,
-      Array.modify(findCircuitContaining(acc, dest), (a) =>
+      circuits,
+      Array.modify(destCircuit, (a) =>
         Array.append(a, src)
       )
     );
   } else if (!srcIn && !destIn) {
-    return pipe(acc, Array.append([src, dest]));
+    return pipe(circuits, Array.append([src, dest]));
   }
 
   throw new Error("unexpected state");
