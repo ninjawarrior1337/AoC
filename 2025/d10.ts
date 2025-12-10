@@ -1,7 +1,6 @@
 import { Array } from "effect";
 import { unlines } from "./utils";
-
-import { init } from "z3-solver";
+import { solve, type Coefficients, type Constraint } from "yalps";
 
 interface Initialization {
   indicator_target: boolean[];
@@ -65,112 +64,41 @@ const solveIndicatorLights = (init: Initialization) => {
   }
 };
 
-// const solveJoltageRequirements = (init: Initialization): number => {
-//   type State = { joltage: number[]; depth: number };
-//   type Ret = { minDepth: number; turn: number };
+console.log(data.map(solveIndicatorLights).reduce((acc, v) => acc+v))
 
-//   const cache = new Map<string, Ret>();
+const solveJoltageRequirements = (init: Initialization) => {
+  const constraints = new Map<string, Constraint>();
 
-//   const traverse = (start: number[], btn: number[]) => {
-//     return btn.reduce(
-//       (arr, ind) => Array.modify(arr, ind, (v) => v + 1),
-//       start
-//     );
-//   };
-
-//   const fn = (state: State): Ret => {
-//     console.log(cache);
-//     const cacheV = cache.get(JSON.stringify(state.joltage));
-
-//     if (cacheV) {
-//       if (state.depth >= cacheV.turn) {
-//         return cacheV;
-//       }
-//     }
-
-//     // if()
-
-//     // Any joltage went over
-//     if (
-//       state.joltage.reduce(
-//         (acc, j, jIdx) => j > init.joltage[jIdx]! || acc,
-//         false
-//       )
-//     ) {
-//       cache.set(JSON.stringify(state.joltage), {
-//         minDepth: Infinity,
-//         turn: state.depth,
-//       });
-//       return { minDepth: Infinity, turn: state.depth };
-//     }
-
-//     // Joltage matches exactly
-//     if (
-//       state.joltage.reduce(
-//         (acc, v, idx) => v === init.joltage[idx] && acc,
-//         true
-//       )
-//     ) {
-//       cache.set(JSON.stringify(state.joltage), {
-//         minDepth: state.depth,
-//         turn: state.depth,
-//       });
-//       return { minDepth: state.depth, turn: state.depth };
-//     }
-
-//     let res = Infinity;
-//     for (const btn of init.buttons) {
-//       res = Math.min(
-//         res,
-//         fn({ joltage: traverse(state.joltage, btn), depth: state.depth + 1 })
-//           .minDepth!
-//       );
-//     }
-
-//     let ret = { minDepth: res, turn: state.depth };
-//     cache.set(JSON.stringify(state.joltage), ret);
-
-//     return ret;
-//   };
-
-//   return fn({
-//     joltage: Array.makeBy(init.indicator_target.length, () => 0),
-//     depth: 0,
-//   }).minDepth;
-// };
-
-const { Context } = await init();
-const { Optimize, Int, Sum } = Context("main");
-const solveJoltageRequirements = async (init: Initialization) => {
-  const opt = new Optimize();
-
-  const presses = init.buttons.map((b) => Int.const(`${b}`));
-
-  for (const [p, btn] of Array.zip(presses, init.buttons)) {
-    for (const b of btn) {
-      opt.add();
-    }
+  for (const [idx, jTgt] of init.joltage.entries()) {
+    constraints.set(`j${idx}`, { equal: jTgt });
+    constraints.set(`ct`, { min: 1 });
   }
 
-  presses.forEach(p => opt.add(p.ge(0)))
-//   opt.minimize(presses.reduce((acc, v) => acc.add(v)));
+  const variables = new Map<string, Coefficients>();
+  for (const [idx, btn] of init.buttons.entries()) {
+    const v = new Map<string, number>();
+    for (const b of btn) {
+      v.set("j" + b.toString(), 1);
+    }
+    v.set("ct", 1);
+    variables.set(`p${idx}`, v);
+  }
+  const model = {
+    direction: "minimize" as const,
+    objective: "ct",
+    constraints,
+    variables: variables,
+    integers: true,
+  };
+  const solution = solve(model);
 
-  await opt.check()
-  const m = opt.model();
-
-  return presses
-    .map((p) => parseInt(`${m.get(p)}`))
-    .reduce((acc, v) => acc + v);
+  return solution;
 };
 
-for(const d of data) {
-    await solveJoltageRequirements(d)
-}
-
-// console.log(
-//   data.map((r) => {
-//     console.log(`Solving ${r.joltage}`);
-//     return solveJoltageRequirements(r);
-//   })
-// );
-// .reduce((acc, v) => acc+v));
+console.log(
+  data
+    .map((r) => {
+      return solveJoltageRequirements(r).result;
+    })
+    .reduce((acc, v) => acc + v)
+);
