@@ -43,9 +43,11 @@ const solveIndicatorLights = (init: Initialization) => {
   const queue: { state: boolean[]; depth: number }[] = [
     { state: mkStart(), depth: 0 },
   ];
+  const visited = new Set<string>();
 
   for (;;) {
     const state = queue.shift()!;
+    visited.add(JSON.stringify(state.state))
     if (
       state.state.reduce(
         (acc, v, idx) => v === init.indicator_target[idx] && acc,
@@ -55,16 +57,18 @@ const solveIndicatorLights = (init: Initialization) => {
       return state.depth;
     } else {
       queue.push(
-        ...init.buttons.map((b) => ({
-          state: traverse(state.state, b),
-          depth: state.depth + 1,
-        }))
+        ...init.buttons
+          .map((b) => ({
+            state: traverse(state.state, b),
+            depth: state.depth + 1,
+          }))
+          .filter(({ state }) => !visited.has(JSON.stringify(state)))
       );
     }
   }
 };
 
-console.log(data.map(solveIndicatorLights).reduce((acc, v) => acc+v))
+console.log(data.map(solveIndicatorLights).reduce((acc, v) => acc + v));
 
 const solveJoltageRequirements = (init: Initialization) => {
   const constraints = new Map<string, Constraint>();

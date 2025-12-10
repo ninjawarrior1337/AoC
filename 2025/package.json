@@ -12,7 +12,6 @@
   "dependencies": {
     "@flatten-js/core": "^1.6.8",
     "effect": "^3.19.8",
-    "yalps": "^0.6.3",
-    "z3-solver": "^4.15.4"
+    "yalps": "^0.6.3"
   }
 }
