@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@flatten-js/core": "^1.6.8",
-    "effect": "^3.19.8"
+    "effect": "^3.19.8",
+    "tsx": "^4.21.0",
+    "z3-solver": "^4.15.4"
   }
 }
