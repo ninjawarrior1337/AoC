@@ -7,7 +7,9 @@ export const unlines = (input: string) => input.split("\n")
 export const memoize = <K extends { [k: string]: any }, V>(f: (arg: K) => V) => {
   const memo = new Map<string, V>();
   return (arg: K) => {
-    const tKey = JSON.stringify(arg, Object.keys(arg).sort());
+    console.log(memo)
+    const fKey = Object.keys(arg).filter(v => !v.startsWith("_")).reduce((obj, key) => Object.assign(obj, {[key]: arg[key]}), {})
+    const tKey = JSON.stringify(fKey, Object.keys(fKey).sort());
     const c = memo.get(tKey);
     if (c) {
       return c;
